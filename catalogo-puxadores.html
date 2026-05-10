@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Catálogo Premium — Puxadores Para Portas</title>
+<meta name="description" content="Catálogo exclusivo de puxadores premium. Preto Fosco, Inox Escovado, Inox Polido, Ouro Antique e Corten. Marília-SP. (14) 99824-6514">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --gold:#C9A96E;--gold-l:#E8C98A;--gold-d:#A07840;
+  --black:#0A0A0A;--dark:#111111;--dark2:#1A1A1A;--dark3:#222222;
+  --w:#FFFFFF;--w70:rgba(255,255,255,.7);--w30:rgba(255,255,255,.3);--w10:rgba(255,255,255,.1);
+  --green:#25D366;--red:#E53E3E
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--black);color:var(--w);overflow-x:hidden;line-height:1.6}
+h1,h2,h3,h4{font-family:'Cormorant Garamond',serif;font-weight:400;line-height:1.1}
+a{text-decoration:none}
+img{display:block;max-width:100%}
+
+/* REVEAL */
+.reveal{opacity:0;transform:translateY(36px);transition:opacity .75s ease,transform .75s ease}
+.reveal.visible{opacity:1;transform:none}
+.d1{transition-delay:.1s}.d2{transition-delay:.2s}.d3{transition-delay:.3s}
+.d4{transition-delay:.4s}.d5{transition-delay:.5s}.d6{transition-delay:.6s}
+
+/* ── HERO ── */
+#hero{
+  position:relative;min-height:100svh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;text-align:center;
+  padding:80px 24px 100px;overflow:hidden;
+  background:radial-gradient(ellipse 80% 60% at 50% 55%,#1c1206 0%,var(--black) 72%)
+}
+#particles-canvas{position:absolute;inset:0;pointer-events:none;z-index:0;width:100%;height:100%}
+.hero-line{position:absolute;height:1px;width:55%;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:.35}
+.hero-line.top{top:28%}.hero-line.bot{bottom:28%}
+.hero-inner{position:relative;z-index:2;max-width:860px}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  border:1px solid rgba(201,169,110,.35);color:var(--gold);
+  font-size:10px;font-weight:500;letter-spacing:3.5px;text-transform:uppercase;
+  padding:8px 22px;margin-bottom:36px;background:rgba(201,169,110,.04);
+  animation:fadeDown .9s ease both
+}
+.hero-eyebrow::before{content:'✦';font-size:9px}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:none}}
+.hero-title{
+  font-size:clamp(40px,8.5vw,96px);font-weight:300;letter-spacing:-.5px;
+  margin-bottom:28px;line-height:1.04;
+  animation:fadeUp 1s .15s ease both
+}
+.hero-title em{font-style:italic;color:var(--gold)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+.hero-sub{
+  font-size:clamp(14px,1.9vw,19px);color:var(--w70);max-width:520px;
+  margin:0 auto 52px;font-weight:300;line-height:1.75;
+  animation:fadeUp 1s .3s ease both
+}
+.hero-cta{
+  display:inline-flex;align-items:center;gap:12px;
+  background:var(--green);color:#fff;font-size:13px;font-weight:600;
+  letter-spacing:1.2px;padding:18px 44px;border-radius:2px;
+  transition:all .3s ease;position:relative;overflow:hidden;
+  animation:fadeUp 1s .45s ease both
+}
+.hero-cta::after{
+  content:'';position:absolute;inset:0;
+  background:rgba(255,255,255,.12);
+  transform:translateX(-100%) skewX(-20deg);
+  transition:transform .4s ease
+}
+.hero-cta:hover::after{transform:translateX(120%) skewX(-20deg)}
+.hero-cta:hover{transform:translateY(-3px);box-shadow:0 20px 50px rgba(37,211,102,.35)}
+.hero-scroll{
+  position:absolute;bottom:36px;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  color:var(--w30);font-size:9px;letter-spacing:3px;text-transform:uppercase
+}
+.scroll-line{width:1px;height:36px;background:linear-gradient(180deg,var(--gold),transparent);animation:pulse-line 2s ease-in-out infinite}
+@keyframes pulse-line{0%,100%{opacity:.3;transform:scaleY(1)}50%{opacity:1;transform:scaleY(.5)}}
+
+/* ── DESTAQUES ── */
+#destaques{
+  background:var(--dark2);
+  border-top:1px solid rgba(201,169,110,.18);
+  border-bottom:1px solid rgba(201,169,110,.18)
+}
+.destaques-grid{
+  max-width:1140px;margin:0 auto;padding:0 24px;
+  display:grid;grid-template-columns:repeat(3,1fr)
+}
+.dest-item{
+  display:flex;flex-direction:column;align-items:center;
+  text-align:center;padding:44px 32px;position:relative
+}
+.dest-item:not(:last-child)::after{
+  content:'';position:absolute;right:0;top:20%;
+  height:60%;width:1px;background:rgba(201,169,110,.18)
+}
+.dest-icon{font-size:26px;color:var(--gold);margin-bottom:16px}
+.dest-title{font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--gold);margin-bottom:6px}
+.dest-text{font-size:13px;color:var(--w70);line-height:1.55}
+
+/* ── SECTION HEADER ── */
+.sec-wrap{max-width:1400px;margin:0 auto;padding:0 24px}
+.sec-header{text-align:center;margin-bottom:64px}
+.sec-label{display:inline-block;font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:14px;font-weight:500}
+.sec-title{font-size:clamp(34px,5.5vw,64px);font-weight:300}
+.sec-title em{font-style:italic;color:var(--gold)}
+.sec-divider{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:22px}
+.sec-divider::before,.sec-divider::after{content:'';flex:1;max-width:72px;height:1px}
+.sec-divider::before{background:linear-gradient(90deg,transparent,var(--gold))}
+.sec-divider::after{background:linear-gradient(90deg,var(--gold),transparent)}
+.div-gem{color:var(--gold);font-size:11px}
+
+/* ── COLEÇÕES ── */
+#colecoes{padding:110px 0}
+.cards-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:22px
+}
+
+/* CARD */
+.card{
+  position:relative;background:var(--dark2);
+  border:1px solid rgba(255,255,255,.06);border-radius:3px;
+  overflow:hidden;cursor:default;
+  transition:transform .4s ease,border-color .4s ease,box-shadow .4s ease
+}
+.card:hover{
+  transform:translateY(-10px);
+  border-color:rgba(201,169,110,.4);
+  box-shadow:0 40px 80px rgba(0,0,0,.65),0 0 0 1px rgba(201,169,110,.12),inset 0 1px 0 rgba(201,169,110,.18)
+}
+/* shimmer */
+.card::before{
+  content:'';position:absolute;top:0;left:-120%;width:55%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(201,169,110,.07),transparent);
+  transform:skewX(-18deg);transition:left .65s ease;z-index:5;pointer-events:none
+}
+.card:hover::before{left:160%}
+
+.card-img-wrap{position:relative;height:256px;overflow:hidden;background:#0d0d0d}
+.card-img-wrap::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(180deg,transparent 35%,rgba(10,10,10,.92) 100%);z-index:1
+}
+.card img{width:100%;height:100%;object-fit:cover;transition:transform .65s ease}
+.card:hover img{transform:scale(1.09)}
+
+.card-badges{position:absolute;top:14px;left:14px;right:14px;display:flex;justify-content:space-between;align-items:flex-start;z-index:3}
+.badge-ex{
+  background:rgba(201,169,110,.12);border:1px solid rgba(201,169,110,.55);
+  color:var(--gold);font-size:8px;font-weight:600;letter-spacing:2px;
+  text-transform:uppercase;padding:5px 10px;backdrop-filter:blur(8px)
+}
+.badge-hot{
+  background:rgba(229,62,62,.14);border:1px solid rgba(229,62,62,.45);
+  color:#FC8181;font-size:8px;font-weight:500;letter-spacing:1px;
+  padding:5px 10px;backdrop-filter:blur(8px)
+}
+
+.card-body{padding:22px 24px 24px;position:relative;z-index:2}
+.card-finish{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:6px;font-weight:500}
+.card-name{font-size:27px;margin-bottom:14px;font-weight:400;color:var(--w);line-height:1.1}
+
+.stock-label{display:flex;justify-content:space-between;font-size:10px;color:var(--w30);margin-bottom:5px}
+.stock-bar{height:2px;background:rgba(255,255,255,.08);border-radius:2px;margin-bottom:20px;overflow:hidden}
+.stock-fill{height:100%;background:linear-gradient(90deg,var(--red),#FF6B6B);border-radius:2px;transition:width 1.4s ease;width:0}
+.stock-fill.green{background:linear-gradient(90deg,#276749,#68D391)}
+.stock-fill.gold{background:linear-gradient(90deg,var(--gold-d),var(--gold))}
+
+.card-btns{display:flex;gap:10px}
+.btn-ver,.btn-cotar{
+  flex:1;display:flex;align-items:center;justify-content:center;gap:7px;
+  font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;
+  padding:14px 12px;transition:all .3s ease;min-height:48px
+}
+.btn-ver{border:1px solid rgba(201,169,110,.45);color:var(--gold);background:transparent}
+.btn-ver:hover{background:rgba(201,169,110,.07);border-color:var(--gold)}
+.btn-cotar{background:var(--gold);color:var(--black);border:1px solid var(--gold)}
+.btn-cotar:hover{background:var(--gold-l);box-shadow:0 8px 24px rgba(201,169,110,.3)}
+
+/* ── DIFERENCIAIS ── */
+#diferenciais{
+  padding:110px 0;background:var(--dark2);
+  border-top:1px solid rgba(255,255,255,.05)
+}
+.dif-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:24px;margin-top:64px
+}
+.dif-card{
+  text-align:center;padding:40px 24px;border:1px solid rgba(255,255,255,.06);
+  background:var(--black);transition:border-color .3s ease,transform .3s ease
+}
+.dif-card:hover{border-color:rgba(201,169,110,.28);transform:translateY(-5px)}
+.dif-icon{
+  width:58px;height:58px;border:1px solid rgba(201,169,110,.28);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 22px;font-size:21px;color:var(--gold);position:relative
+}
+.dif-icon::before{content:'';position:absolute;inset:5px;background:rgba(201,169,110,.04)}
+.dif-num{font-family:'Cormorant Garamond',serif;font-size:52px;font-weight:300;color:var(--gold);line-height:1;margin-bottom:8px}
+.dif-lbl{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:2px;color:var(--w);margin-bottom:10px}
+.dif-desc{font-size:13px;color:var(--w70);line-height:1.6}
+
+/* ── TAMANHOS ── */
+#tamanhos{padding:110px 0}
+.sizes-table{width:100%;border-collapse:collapse;margin-top:48px}
+.sizes-table thead tr{border-bottom:1px solid rgba(201,169,110,.28)}
+.sizes-table th{
+  font-family:'DM Sans',sans-serif;font-size:9px;letter-spacing:3px;
+  text-transform:uppercase;color:var(--gold);padding:16px 24px;text-align:left;font-weight:500
+}
+.sizes-table tbody tr{border-bottom:1px solid rgba(255,255,255,.04);transition:background .2s ease}
+.sizes-table tbody tr:hover{background:rgba(201,169,110,.03)}
+.sizes-table td{padding:20px 24px;font-size:15px;color:var(--w70);vertical-align:middle}
+.sizes-table td:first-child{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:500;color:var(--w)}
+.sz-badge{display:inline-block;padding:4px 12px;font-size:9px;letter-spacing:2px;text-transform:uppercase;font-weight:600}
+.sz-badge.pop{background:rgba(201,169,110,.1);border:1px solid rgba(201,169,110,.4);color:var(--gold)}
+.sz-badge.std{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);color:var(--w70)}
+.sz-bar-wrap{width:110px}
+.sz-bar{height:3px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden}
+.sz-bar-fill{height:100%;background:linear-gradient(90deg,var(--gold-d),var(--gold));border-radius:2px}
+.btn-site{
+  display:inline-flex;align-items:center;gap:10px;
+  border:1px solid rgba(201,169,110,.4);color:var(--gold);
+  font-size:10px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;
+  padding:16px 40px;transition:all .3s ease;min-height:52px
+}
+.btn-site:hover{background:rgba(201,169,110,.06);border-color:var(--gold)}
+
+/* ── URGÊNCIA ── */
+#urgencia{
+  background:linear-gradient(135deg,#1a0a0a 0%,var(--black) 50%,#0a1208 100%);
+  border-top:1px solid rgba(229,62,62,.18);border-bottom:1px solid rgba(229,62,62,.18);
+  padding:72px 24px;text-align:center
+}
+.urg-inner{max-width:780px;margin:0 auto}
+.urg-lbl{display:inline-flex;align-items:center;gap:10px;color:#FC8181;font-size:10px;letter-spacing:4px;text-transform:uppercase;margin-bottom:24px}
+.urg-dot{width:8px;height:8px;border-radius:50%;background:#FC8181;animation:blink 1.5s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.18}}
+.urg-title{font-size:clamp(30px,5vw,54px);font-weight:300;margin-bottom:18px;line-height:1.1}
+.urg-title span{color:var(--gold);font-style:italic}
+.urg-text{font-size:15px;color:var(--w70);max-width:540px;margin:0 auto 32px;line-height:1.75}
+.btn-check{
+  display:inline-flex;align-items:center;gap:10px;
+  background:var(--gold);color:var(--black);
+  font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  padding:17px 36px;transition:all .3s ease;border:1px solid var(--gold);min-height:52px
+}
+.btn-check:hover{background:var(--gold-l);box-shadow:0 12px 30px rgba(201,169,110,.3)}
+
+/* ── CTA FINAL ── */
+#cta-final{padding:130px 24px;text-align:center;position:relative;overflow:hidden}
+#cta-final::before{
+  content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:600px;height:600px;
+  background:radial-gradient(circle,rgba(201,169,110,.05) 0%,transparent 70%);
+  pointer-events:none
+}
+.cta-inner{max-width:680px;margin:0 auto;position:relative;z-index:1}
+.cta-title{font-size:clamp(38px,6.5vw,76px);font-weight:300;margin-bottom:20px;line-height:1.04}
+.cta-title em{color:var(--gold);font-style:italic}
+.cta-sub{font-size:16px;color:var(--w70);margin-bottom:52px;line-height:1.75}
+.cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.btn-wa-lg{
+  display:inline-flex;align-items:center;gap:12px;
+  background:var(--green);color:#fff;
+  font-size:14px;font-weight:600;letter-spacing:.5px;
+  padding:20px 48px;border-radius:2px;transition:all .3s ease;min-height:60px
+}
+.btn-wa-lg:hover{background:#20bd5a;transform:translateY(-3px);box-shadow:0 20px 50px rgba(37,211,102,.35)}
+.btn-email-lg{
+  display:inline-flex;align-items:center;gap:12px;
+  background:transparent;color:var(--w70);
+  font-size:14px;font-weight:400;
+  padding:20px 48px;border:1px solid rgba(255,255,255,.14);
+  border-radius:2px;transition:all .3s ease;min-height:60px
+}
+.btn-email-lg:hover{color:var(--w);border-color:rgba(201,169,110,.4);background:rgba(201,169,110,.04)}
+.cta-promise{margin-top:36px;display:flex;align-items:center;justify-content:center;gap:28px;flex-wrap:wrap;font-size:12px;color:var(--w30)}
+.cta-promise span::before{content:'✓  ';color:var(--gold)}
+
+/* ── RODAPÉ ── */
+footer{background:var(--dark2);border-top:1px solid rgba(255,255,255,.05);padding:64px 24px 32px}
+.footer-inner{max-width:1100px;margin:0 auto}
+.footer-top{display:grid;grid-template-columns:2fr 1fr 1fr;gap:48px;padding-bottom:40px;border-bottom:1px solid rgba(255,255,255,.06);margin-bottom:32px}
+.ft-brand{font-family:'Cormorant Garamond',serif;font-size:30px;color:var(--w);margin-bottom:10px}
+.ft-tagline{font-size:11px;color:var(--gold);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:18px}
+.ft-desc{font-size:13px;color:var(--w70);line-height:1.7;max-width:320px}
+.ft-col-title{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:18px;font-weight:500}
+.ft-links{list-style:none;display:flex;flex-direction:column;gap:10px}
+.ft-links a{color:var(--w70);font-size:13px;transition:color .2s ease}
+.ft-links a:hover{color:var(--gold)}
+.ft-contact-item{
+  display:flex;align-items:center;gap:10px;color:var(--w70);
+  font-size:13px;margin-bottom:12px;transition:color .2s ease
+}
+.ft-contact-item:hover{color:var(--gold)}
+.ft-contact-item i{color:var(--gold);width:15px;font-size:12px}
+.footer-bot{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.ft-copy{font-size:11px;color:var(--w30)}
+.ft-socials{display:flex;gap:10px}
+.ft-social{
+  width:34px;height:34px;border:1px solid rgba(255,255,255,.1);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--w70);font-size:12px;transition:all .2s ease
+}
+.ft-social:hover{border-color:var(--gold);color:var(--gold)}
+
+/* ── WA FLOAT ── */
+#wa-float{
+  position:fixed;bottom:28px;right:28px;z-index:900;
+  width:58px;height:58px;border-radius:50%;background:var(--green);
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:25px;
+  box-shadow:0 8px 28px rgba(37,211,102,.42);
+  transition:transform .3s ease
+}
+#wa-float:hover{transform:scale(1.12)}
+#wa-float::before,#wa-float::after{
+  content:'';position:absolute;border-radius:50%;
+  border:2px solid var(--green);animation:wa-pulse 2.2s ease-out infinite
+}
+#wa-float::before{inset:-6px;opacity:.5}
+#wa-float::after{inset:-14px;opacity:.22;animation-delay:.42s;border-width:1px}
+@keyframes wa-pulse{0%{transform:scale(1);opacity:.5}100%{transform:scale(1.55);opacity:0}}
+
+/* ── EXIT MODAL ── */
+#exit-modal{position:fixed;inset:0;z-index:9000;display:none;align-items:center;justify-content:center;padding:20px}
+#exit-modal.show{display:flex}
+.m-overlay{position:absolute;inset:0;background:rgba(0,0,0,.88);backdrop-filter:blur(4px)}
+.m-box{
+  position:relative;z-index:1;background:var(--dark2);
+  border:1px solid rgba(201,169,110,.28);
+  padding:52px 44px;max-width:500px;width:100%;text-align:center;
+  animation:modal-in .38s cubic-bezier(.34,1.56,.64,1)
+}
+@keyframes modal-in{from{opacity:0;transform:scale(.9) translateY(-18px)}to{opacity:1;transform:none}}
+.m-close{
+  position:absolute;top:14px;right:18px;background:none;border:none;
+  color:var(--w30);font-size:22px;cursor:pointer;padding:4px;transition:color .2s;line-height:1
+}
+.m-close:hover{color:var(--w)}
+.m-gem{color:var(--gold);font-size:30px;margin-bottom:14px}
+.m-title{font-size:34px;font-weight:300;margin-bottom:12px;line-height:1.1}
+.m-title em{color:var(--gold);font-style:italic}
+.m-text{font-size:14px;color:var(--w70);margin-bottom:28px;line-height:1.65}
+.m-pix{
+  background:rgba(201,169,110,.07);border:1px solid rgba(201,169,110,.22);
+  padding:16px 22px;margin-bottom:24px;
+  display:flex;align-items:center;justify-content:center;gap:16px
+}
+.m-pix-num{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:500;color:var(--gold)}
+.m-pix-lbl{font-size:12px;color:var(--w70);text-align:left;line-height:1.35}
+.m-btn{
+  display:flex;align-items:center;justify-content:center;gap:10px;width:100%;
+  background:var(--green);color:#fff;font-size:13px;font-weight:600;
+  padding:17px;border-radius:2px;margin-bottom:12px;transition:all .3s;
+  border:none;cursor:pointer
+}
+.m-btn:hover{background:#20bd5a;box-shadow:0 12px 28px rgba(37,211,102,.3)}
+.m-skip{
+  background:none;border:none;color:var(--w30);font-size:11px;
+  cursor:pointer;text-decoration:underline;transition:color .2s
+}
+.m-skip:hover{color:var(--w70)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:1100px){
+  .cards-grid{grid-template-columns:repeat(2,1fr)}
+  .dif-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:768px){
+  .destaques-grid{grid-template-columns:1fr}
+  .dest-item:not(:last-child)::after{display:none}
+  .dest-item{padding:28px 24px;border-bottom:1px solid rgba(201,169,110,.1)}
+  .dest-item:last-child{border-bottom:none}
+  .cards-grid{grid-template-columns:1fr}
+  .dif-grid{grid-template-columns:repeat(2,1fr)}
+  .footer-top{grid-template-columns:1fr;gap:28px}
+  .cta-btns{flex-direction:column;align-items:stretch}
+  .m-box{padding:36px 24px}
+  .sizes-table th,.sizes-table td{padding:14px 12px}
+  .sz-bar-wrap{display:none}
+}
+@media(max-width:480px){
+  .dif-grid{grid-template-columns:1fr}
+  #wa-float{bottom:18px;right:18px;width:52px;height:52px;font-size:22px}
+  .card-btns{flex-direction:column}
+  .cta-promise{flex-direction:column;gap:8px}
+  .hero-title{font-size:36px}
+}
+</style>
+</head>
+<body>
+
+<!-- WA FLOAT -->
+<a id="wa-float" href="https://wa.me/5514998246514?text=Ol%C3%A1!%20Vi%20o%20cat%C3%A1logo%20de%20puxadores%20e%20gostaria%20de%20solicitar%20uma%20cota%C3%A7%C3%A3o%20para%20meu%20projeto." target="_blank" rel="noopener" aria-label="WhatsApp">
+  <i class="fab fa-whatsapp"></i>
+</a>
+
+<!-- ═══ HERO ═══ -->
+<section id="hero">
+  <canvas id="particles-canvas"></canvas>
+  <div class="hero-line top"></div>
+  <div class="hero-line bot"></div>
+  <div class="hero-inner">
+    <div class="hero-eyebrow">Catálogo Premium 2025 — Marília, SP</div>
+    <h1 class="hero-title">O Detalhe Que Define<br>Um Projeto <em>Extraordinário</em></h1>
+    <p class="hero-sub">Puxadores de design para arquitetos e decoradores que exigem o melhor acabamento — do minimalismo brutal ao luxo clássico.</p>
+    <a class="hero-cta" href="https://wa.me/5514998246514?text=Ol%C3%A1!%20Vi%20o%20cat%C3%A1logo%20de%20puxadores%20e%20gostaria%20de%20solicitar%20uma%20cota%C3%A7%C3%A3o%20para%20meu%20projeto." target="_blank" rel="noopener">
+      <i class="fab fa-whatsapp"></i>
+      💬 SOLICITAR CATÁLOGO COMPLETO
+    </a>
+  </div>
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    <span>Explorar</span>
+  </div>
+</section>
+
+<!-- ═══ DESTAQUES ═══ -->
+<section id="destaques">
+  <div class="destaques-grid">
+    <div class="dest-item reveal">
+      <div class="dest-icon"><i class="fas fa-truck"></i></div>
+      <div class="dest-title">Entrega Nacional</div>
+      <div class="dest-text">Enviamos para todo o Brasil.<br>Prazo e frete consulte-nos.</div>
+    </div>
+    <div class="dest-item reveal d2">
+      <div class="dest-icon"><i class="fas fa-percentage"></i></div>
+      <div class="dest-title">10% OFF no PIX</div>
+      <div class="dest-text">Desconto especial para pagamentos<br>via PIX em todas as coleções.</div>
+    </div>
+    <div class="dest-item reveal d4">
+      <div class="dest-icon"><i class="fas fa-ruler-combined"></i></div>
+      <div class="dest-title">Medidas Sob Consulta</div>
+      <div class="dest-text">De 30 cm a 2,5 m — fabricamos<br>no tamanho exato do seu projeto.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ COLEÇÕES ═══ -->
+<section id="colecoes">
+  <div class="sec-wrap">
+    <div class="sec-header reveal">
+      <span class="sec-label">Acabamentos exclusivos</span>
+      <h2 class="sec-title">Nossas <em>Coleções</em></h2>
+      <div class="sec-divider"><span class="div-gem">✦</span></div>
+    </div>
+    <div class="cards-grid">
+
+      <!-- Preto Fosco -->
+      <div class="card reveal d1">
+        <div class="card-img-wrap">
+          <div class="card-badges">
+            <span class="badge-ex">✦ Coleção Exclusiva</span>
+            <span class="badge-hot">🔥 Alta Procura</span>
+          </div>
+          <img src="https://images.tcdn.com.br/img/img_prod/1466254/90_puxador_para_porta_preto_fosco_lugui_2_20260224195031_13e2ca9f9bdd.jpg" alt="Puxador Preto Fosco" loading="lazy" onerror="this.src='https://via.placeholder.com/600x400/0d0d0d/C9A96E?text=Preto+Fosco'">
+        </div>
+        <div class="card-body">
+          <div class="card-finish">Acabamento Fosco</div>
+          <h3 class="card-name">Preto Fosco</h3>
+          <div class="stock-label"><span>Disponibilidade</span><span style="color:#FC8181">Alta Demanda</span></div>
+          <div class="stock-bar"><div class="stock-fill" data-w="78"></div></div>
+          <div class="card-btns">
+            <a class="btn-ver" href="https://www.puxadoresparaportas.com.br/puxadores-para-portas/puxador-porta-preto-fosco" target="_blank" rel="noopener">Ver Modelos</a>
+            <a class="btn-cotar" href="https://wa.me/5514998246514?text=Ol%C3%A1!%20Tenho%20interesse%20na%20cole%C3%A7%C3%A3o%20Preto%20Fosco.%20Pode%20me%20enviar%20uma%20cota%C3%A7%C3%A3o?" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i> Cotar</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Inox Escovado -->
+      <div class="card reveal d2">
+        <div class="card-img-wrap">
+          <div class="card-badges">
+            <span class="badge-ex">✦ Coleção Exclusiva</span>
+            <span class="badge-hot">🔥 Alta Procura</span>
+          </div>
+          <img src="https://images.tcdn.com.br/img/img_prod/1466254/90_puxador_para_porta_ao_inox_escovado_slin_2_20260225132614_ba2e90a2c3e3.jpg" alt="Puxador Inox Escovado" loading="lazy" onerror="this.src='https://via.placeholder.com/600x400/0d0d0d/C9A96E?text=Inox+Escovado'">
+        </div>
+        <div class="card-body">
+          <div class="card-finish">Acabamento Escovado</div>
+          <h3 class="card-name">Aço Inox Escovado</h3>
+          <div class="stock-label"><span>Disponibilidade</span><span style="color:#FC8181">Alta Demanda</span></div>
+          <div class="stock-bar"><div class="stock-fill" data-w="65"></div></div>
+          <div class="card-btns">
+            <a class="btn-ver" href="https://www.puxadoresparaportas.com.br/puxadores-para-portas/puxador-porta-aco-inox-escovado" target="_blank" rel="noopener">Ver Modelos</a>
+            <a class="btn-cotar" href="https://wa.me/5514998246514?text=Ol%C3%A1!%20Tenho%20interesse%20na%20cole%C3%A7%C3%A3o%20Inox%20Escovado.%20Pode%20me%20enviar%20uma%20cota%C3%A7%C3%A3o?" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i> Cotar</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Inox Polido -->
+      <div class="card reveal d3">
+        <div class="card-img-wrap">
+          <div class="card-badges">
+            <span class="badge-ex">✦ Coleção Exclusiva</span>
+          </div>
+          <img src="https://images.tcdn.com.br/img/img_prod/1466254/puxador_para_porta_1_m_deslocado_ao_inox_polido_g_1_20260321124049_b02d84b871a9.png" alt="Puxador Inox Polido" loading="lazy" onerror="this.src='https://via.placeholder.com/600x400/0d0d0d/C9A96E?text=Inox+Polido'">
+        </div>
+        <div class="card-body">
+          <div class="card-finish">Acabamento Polido</div>
+          <h3 class="card-name">Aço Inox Polido</h3>
+          <div class="stock-label"><span>Disponibilidade</span><span style="color:#68D391">Disponível</span></div>
+          <div class="stock-bar"><div class="stock-fill green" data-w="45"></div></div>
+          <div class="card-btns">
+            <a class="btn-ver" href="https://www.puxadoresparaportas.com.br/puxadores-para-portas/puxador-porta-aco-inox-polido" target="_blank" rel="noopener">Ver Modelos</a>
+            <a class="btn-cotar" href="https://wa.me/5514998246514?text=Ol%C3%A1!%20Tenho%20interesse%20na%20cole%C3%A7%C3%A3o%20Inox%20Polido.%20Pode%20me%20enviar%20uma%20cota%C3%A7%C3%A3o?" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i> Cotar</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ouro Velho Antique -->
+      <div class="card reveal d4">
+        <div class="card-img-wrap">
+          <div class="card-badges">
+            <span class="badge-ex">✦ Coleção Exclusiva</span>
+            <span class="badge-hot">🔥 Alta Procura</span>
+          </div>
+          <img src="https://images.tcdn.com.br/img/img_prod/1466254/90_puxador_para_porta_ouro_velho_antique_slin_1_20260225081901_3329559c3ada.jpg" alt="Puxador Ouro Velho Antique" loading="lazy" onerror="this.src='https://via.placeholder.com/600x400/0d0d0d/C9A96E?text=Ouro+Antique'">
+        </div>
+        <div class="card-body">
+          <div class="card-finish">Acabamento Antique</div>
+          <h3 class="card-name">Ouro Velho Antique</h3>
+          <div class="stock-label"><span>Disponibilidade</span><span style="color:#FC8181">Estoque Limitado</span></div>
+          <div class="stock-bar"><div class="stock-fill" data-w="86"></div></div>
+          <div class="card-btns">
+            <a class="btn-ver" href="https://www.puxadoresparaportas.com.br/puxadores-para-portas/puxador-porta-ouro-velho-antique" target="_blank" rel="noopener">Ver Modelos</a>
+            <a class="btn-cotar" href="https://wa.me/5514998246514?text=Ol%C3%A1!%20Tenho%20interesse%20na%20cole%C3%A7%C3%A3o%20Ouro%20Velho%20Antique.%20Pode%20me%20enviar%20uma%20cota%C3%A7%C3%A3o?" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i> Cotar</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Aço Corten -->
+      <div class="card reveal d5">
+        <div class="card-img-wrap">
+          <div class="card-badges">
+            <span class="badge-ex">✦ Coleção Exclusiva</span>
+          </div>
+          <img src="https://images.tcdn.com.br/img/img_prod/1466254/90_puxador_para_porta_ao_corten_slin_1_20260226065900_80f6e52f5888.png" alt="Puxador Aço Corten" loading="lazy" onerror="this.src='https://via.placeholder.com/600x400/0d0d0d/C9A96E?text=Aco+Corten'">
+        </div>
+        <div class="card-body">
+          <div class="card-finish">Acabamento Corten</div>
+          <h3 class="card-name">Aço Corten</h3>
+          <div class="stock-label"><span>Disponibilidade</span><span style="color:#68D391">Disponível</span></div>
+          <div class="stock-bar"><div class="stock-fill green" data-w="38"></div></div>
+          <div class="card-btns">
+            <a class="btn-ver" href="https://www.puxadoresparaportas.com.br/puxadores-para-portas/puxador-porta-aco-corten" target="_blank" rel="noopener">Ver Modelos</a>
+            <a class="btn-cotar" href="https://wa.me/5514998246514?text=Ol%C3%A1!%20Tenho%20interesse%20na%20cole%C3%A7%C3%A3o%20A%C3%A7o%20Corten.%20Pode%20me%20enviar%20uma%20cota%C3%A7%C3%A3o?" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i> Cotar</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Por Tamanho -->
+      <div class="card reveal d6">
+        <div class="card-img-wrap">
+          <div class="card-badges">
+            <span class="badge-ex">✦ Sob Medida</span>
+          </div>
+          <img src="https://images.tcdn.com.br/img/img_prod/1466254/puxador_para_porta_1_m_deslocado_ao_inox_polido_g_2_20260321124049_365dc0e23ffb.png" alt="Puxadores Por Tamanho" loading="lazy" onerror="this.src='https://via.placeholder.com/600x400/0d0d0d/C9A96E?text=Por+Tamanho'">
+        </div>
+        <div class="card-body">
+          <div class="card-finish">30 cm — 2,5 m</div>
+          <h3 class="card-name">Por Tamanho</h3>
+          <div class="stock-label"><span>Fabricação</span><span style="color:var(--gold)">Sob Consulta</span></div>
+          <div class="stock-bar"><div class="stock-fill gold" data-w="55"></div></div>
+          <div class="card-btns">
+            <a class="btn-ver" href="https://www.puxadoresparaportas.com.br/puxador-porta-por-tamanho" target="_blank" rel="noopener">Ver Tamanhos</a>
+            <a class="btn-cotar" href="https://wa.me/5514998246514?text=Ol%C3%A1!%20Preciso%20de%20um%20puxador%20em%20medida%20espec%C3%ADfica.%20Pode%20me%20ajudar?" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i> Cotar</a>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /cards-grid -->
+  </div>
+</section>
+
+<!-- ═══ DIFERENCIAIS ═══ -->
+<section id="diferenciais">
+  <div class="sec-wrap">
+    <div class="sec-header reveal">
+      <span class="sec-label">Por que nos escolher</span>
+      <h2 class="sec-title">Por Que Escolher Nossos <em>Puxadores</em></h2>
+      <div class="sec-divider"><span class="div-gem">✦</span></div>
+    </div>
+    <div class="dif-grid">
+      <div class="dif-card reveal d1">
+        <div class="dif-icon"><i class="fas fa-medal"></i></div>
+        <div class="dif-num" data-target="500">0</div>
+        <div class="dif-lbl">Projetos Atendidos</div>
+        <div class="dif-desc">Mais de 500 projetos de alto padrão em todo o Brasil com nossa assinatura.</div>
+      </div>
+      <div class="dif-card reveal d2">
+        <div class="dif-icon"><i class="fas fa-award"></i></div>
+        <div class="dif-num" data-target="15">0</div>
+        <div class="dif-lbl">Anos de Experiência</div>
+        <div class="dif-desc">Mais de 15 anos especializados em puxadores premium para projetos de arquitetura.</div>
+      </div>
+      <div class="dif-card reveal d3">
+        <div class="dif-icon"><i class="fas fa-paint-brush"></i></div>
+        <div class="dif-num" data-target="5">0</div>
+        <div class="dif-lbl">Acabamentos Exclusivos</div>
+        <div class="dif-desc">Preto Fosco, Inox Escovado, Inox Polido, Ouro Antique e Aço Corten.</div>
+      </div>
+      <div class="dif-card reveal d4">
+        <div class="dif-icon"><i class="fas fa-bolt"></i></div>
+        <div class="dif-num" data-target="2">0</div>
+        <div class="dif-lbl">Horas para Cotação</div>
+        <div class="dif-desc">Envie as especificações e receba cotação personalizada em até 2 horas úteis.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ TAMANHOS ═══ -->
+<section id="tamanhos">
+  <div class="sec-wrap">
+    <div class="sec-header reveal">
+      <span class="sec-label">Fabricação sob medida</span>
+      <h2 class="sec-title">Tamanhos <em>Disponíveis</em></h2>
+      <div class="sec-divider"><span class="div-gem">✦</span></div>
+      <p style="color:var(--w70);margin-top:16px;font-size:15px">Do detalhe discreto à peça monumental — o tamanho ideal para cada projeto.</p>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="sizes-table reveal">
+        <thead>
+          <tr>
+            <th>Tamanho</th>
+            <th>Uso Ideal</th>
+            <th>Status</th>
+            <th>Demanda</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>30 cm</td><td>Portas de banheiro e lavabo</td><td><span class="sz-badge std">Disponível</span></td><td><div class="sz-bar-wrap"><div class="sz-bar"><div class="sz-bar-fill" style="width:40%"></div></div></div></td></tr>
+          <tr><td>60 cm</td><td>Portas de serviço e ambientes menores</td><td><span class="sz-badge pop">Popular</span></td><td><div class="sz-bar-wrap"><div class="sz-bar"><div class="sz-bar-fill" style="width:65%"></div></div></div></td></tr>
+          <tr><td>80 cm</td><td>Portas internas residenciais</td><td><span class="sz-badge pop">Popular</span></td><td><div class="sz-bar-wrap"><div class="sz-bar"><div class="sz-bar-fill" style="width:80%"></div></div></div></td></tr>
+          <tr><td>1,00 m</td><td>Portas de entrada e salas de estar</td><td><span class="sz-badge pop">Mais Vendido</span></td><td><div class="sz-bar-wrap"><div class="sz-bar"><div class="sz-bar-fill" style="width:95%"></div></div></div></td></tr>
+          <tr><td>1,20 m</td><td>Portas duplas e escritórios</td><td><span class="sz-badge pop">Popular</span></td><td><div class="sz-bar-wrap"><div class="sz-bar"><div class="sz-bar-fill" style="width:70%"></div></div></div></td></tr>
+          <tr><td>1,50 m</td><td>Portões e fachadas comerciais</td><td><span class="sz-badge std">Disponível</span></td><td><div class="sz-bar-wrap"><div class="sz-bar"><div class="sz-bar-fill" style="width:50%"></div></div></div></td></tr>
+          <tr><td>2,00 m</td><td>Portões de garagem e condomínios</td><td><span class="sz-badge std">Sob Consulta</span></td><td><div class="sz-bar-wrap"><div class="sz-bar"><div class="sz-bar-fill" style="width:35%"></div></div></div></td></tr>
+          <tr><td>2,50 m</td><td>Projetos especiais de alto padrão</td><td><span class="sz-badge std">Sob Consulta</span></td><td><div class="sz-bar-wrap"><div class="sz-bar"><div class="sz-bar-fill" style="width:20%"></div></div></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="text-align:center;margin-top:44px" class="reveal">
+      <a class="btn-site" href="https://www.puxadoresparaportas.com.br/puxador-porta-por-tamanho" target="_blank" rel="noopener">
+        Ver Todos os Tamanhos no Site <i class="fas fa-arrow-right" style="margin-left:6px"></i>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ URGÊNCIA ═══ -->
+<section id="urgencia">
+  <div class="urg-inner reveal">
+    <div class="urg-lbl"><div class="urg-dot"></div>Atenção — Estoque Limitado</div>
+    <h2 class="urg-title">Estoque Limitado —<br>Consulte <span>Disponibilidade</span></h2>
+    <p class="urg-text">Projetos premium exigem peças premium. Consulte disponibilidade antes de finalizar seu orçamento.</p>
+    <a class="btn-check" href="https://wa.me/5514998246514?text=Ol%C3%A1!%20Gostaria%20de%20verificar%20a%20disponibilidade%20de%20estoque%20para%20meu%20projeto." target="_blank" rel="noopener">
+      <i class="fab fa-whatsapp"></i> VERIFICAR DISPONIBILIDADE
+    </a>
+  </div>
+</section>
+
+<!-- ═══ CTA FINAL ═══ -->
+<section id="cta-final">
+  <div class="cta-inner">
+    <span class="sec-label reveal">Cotação Rápida</span>
+    <h2 class="cta-title reveal d1">Seu Projeto Merece<br>o <em>Melhor Acabamento</em></h2>
+    <p class="cta-sub reveal d2">Envie as especificações do seu projeto e receba cotação em até 2 horas. Atendemos arquitetos, decoradores e construtoras em todo o Brasil.</p>
+    <div class="cta-btns reveal d3">
+      <a class="btn-wa-lg" href="https://wa.me/5514998246514?text=Ol%C3%A1!%20Vi%20o%20cat%C3%A1logo%20de%20puxadores%20e%20gostaria%20de%20solicitar%20uma%20cota%C3%A7%C3%A3o%20para%20meu%20projeto." target="_blank" rel="noopener">
+        <i class="fab fa-whatsapp"></i> Solicitar Cotação no WhatsApp
+      </a>
+      <a class="btn-email-lg" href="mailto:vendas@puxadoresparaportas.com.br?subject=Cota%C3%A7%C3%A3o%20de%20Puxadores%20%E2%80%94%20Projeto">
+        <i class="fas fa-envelope"></i> Enviar por E-mail
+      </a>
+    </div>
+    <div class="cta-promise reveal d4">
+      <span>Resposta em até 2 horas</span>
+      <span>10% OFF no PIX</span>
+      <span>Entrega para todo o Brasil</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ RODAPÉ ═══ -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <div class="ft-brand">Puxadores Para Portas</div>
+        <div class="ft-tagline">Design de Alto Padrão — Marília, SP</div>
+        <p class="ft-desc">Especialistas em puxadores de design premium para projetos residenciais e comerciais de alto padrão. Atendemos arquitetos, decoradores e construtoras em todo o Brasil.</p>
+      </div>
+      <div>
+        <div class="ft-col-title">Coleções</div>
+        <ul class="ft-links">
+          <li><a href="https://www.puxadoresparaportas.com.br/puxadores-para-portas/puxador-porta-preto-fosco" target="_blank">Preto Fosco</a></li>
+          <li><a href="https://www.puxadoresparaportas.com.br/puxadores-para-portas/puxador-porta-aco-inox-escovado" target="_blank">Inox Escovado</a></li>
+          <li><a href="https://www.puxadoresparaportas.com.br/puxadores-para-portas/puxador-porta-aco-inox-polido" target="_blank">Inox Polido</a></li>
+          <li><a href="https://www.puxadoresparaportas.com.br/puxadores-para-portas/puxador-porta-ouro-velho-antique" target="_blank">Ouro Velho Antique</a></li>
+          <li><a href="https://www.puxadoresparaportas.com.br/puxadores-para-portas/puxador-porta-aco-corten" target="_blank">Aço Corten</a></li>
+          <li><a href="https://www.puxadoresparaportas.com.br/puxador-porta-por-tamanho" target="_blank">Por Tamanho</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="ft-col-title">Contato</div>
+        <a class="ft-contact-item" href="https://wa.me/5514998246514" target="_blank" rel="noopener">
+          <i class="fab fa-whatsapp"></i>(14) 99824-6514
+        </a>
+        <a class="ft-contact-item" href="mailto:vendas@puxadoresparaportas.com.br">
+          <i class="fas fa-envelope"></i>vendas@puxadoresparaportas.com.br
+        </a>
+        <a class="ft-contact-item" href="https://www.puxadoresparaportas.com.br" target="_blank" rel="noopener">
+          <i class="fas fa-globe"></i>puxadoresparaportas.com.br
+        </a>
+        <div class="ft-contact-item" style="cursor:default">
+          <i class="fas fa-map-marker-alt"></i>Marília, SP — Brasil
+        </div>
+      </div>
+    </div>
+    <div class="footer-bot">
+      <div class="ft-copy">© 2025 Puxadores Para Portas — Todos os direitos reservados.</div>
+      <div class="ft-socials">
+        <a class="ft-social" href="https://www.puxadoresparaportas.com.br" target="_blank" aria-label="Site"><i class="fas fa-globe"></i></a>
+        <a class="ft-social" href="https://wa.me/5514998246514" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        <a class="ft-social" href="mailto:vendas@puxadoresparaportas.com.br" aria-label="E-mail"><i class="fas fa-envelope"></i></a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ═══ EXIT INTENT MODAL ═══ -->
+<div id="exit-modal" role="dialog" aria-modal="true" aria-labelledby="m-title">
+  <div class="m-overlay" id="m-overlay"></div>
+  <div class="m-box">
+    <button class="m-close" id="m-close" aria-label="Fechar">×</button>
+    <div class="m-gem">✦</div>
+    <h2 class="m-title" id="m-title">Antes de Sair,<br>Aproveite <em>10% OFF</em></h2>
+    <p class="m-text">Pagando via PIX você garante desconto especial em qualquer coleção. Fale conosco agora e receba sua cotação personalizada.</p>
+    <div class="m-pix">
+      <div class="m-pix-num">10% OFF</div>
+      <div class="m-pix-lbl"><strong style="color:var(--w)">Pagamento via PIX</strong><br>Desconto aplicado na cotação</div>
+    </div>
+    <a class="m-btn" href="https://wa.me/5514998246514?text=Ol%C3%A1!%20Vi%20o%20cat%C3%A1logo%20e%20quero%20aproveitar%20o%2010%25%20de%20desconto%20no%20PIX.%20Pode%20me%20enviar%20uma%20cota%C3%A7%C3%A3o?" target="_blank" rel="noopener">
+      <i class="fab fa-whatsapp"></i> Quero o Desconto de 10%
+    </a>
+    <button class="m-skip" id="m-skip">Continuar sem desconto</button>
+  </div>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+/* ── PARTICLES ── */
+!function(){
+  var c=document.getElementById('particles-canvas'),ctx=c.getContext('2d'),pts=[],raf;
+  function resize(){c.width=c.offsetWidth;c.height=c.offsetHeight}
+  function make(){return{x:Math.random()*c.width,y:Math.random()*c.height,r:Math.random()*1.4+.3,vx:(Math.random()-.5)*.28,vy:-Math.random()*.45-.08,a:Math.random()*.55+.1,life:0,max:Math.random()*200+80}}
+  function init(){resize();pts=[];for(var i=0;i<65;i++){var p=make();p.life=Math.random()*p.max;pts.push(p)}}
+  function draw(){
+    ctx.clearRect(0,0,c.width,c.height);
+    pts.forEach(function(p,i){
+      p.x+=p.vx;p.y+=p.vy;p.life++;
+      var t=p.life/p.max,f=t<.2?t/.2:t>.8?(1-t)/.2:1;
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle='rgba(201,169,110,'+(p.a*f)+')';ctx.fill();
+      if(p.life>=p.max)pts[i]=make();
+    });
+    raf=requestAnimationFrame(draw);
+  }
+  window.addEventListener('resize',function(){resize()});
+  init();draw();
+}();
+
+/* ── REVEAL ── */
+!function(){
+  var io=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('visible');io.unobserve(e.target)}});
+  },{threshold:.1});
+  document.querySelectorAll('.reveal').forEach(function(el){io.observe(el)});
+}();
+
+/* ── STOCK BARS ── */
+!function(){
+  var io=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){
+        var el=e.target,w=el.dataset.w;
+        setTimeout(function(){el.style.width=w+'%'},350);
+        io.unobserve(el);
+      }
+    });
+  },{threshold:.5});
+  document.querySelectorAll('.stock-fill[data-w]').forEach(function(b){io.observe(b)});
+}();
+
+/* ── COUNTERS ── */
+!function(){
+  var io=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(!e.isIntersecting)return;
+      var el=e.target,target=+el.dataset.target,sfx='+',start=0,dur=1800,step=Math.max(1,Math.ceil(target/(dur/16)));
+      var t=setInterval(function(){
+        start=Math.min(start+step,target);
+        el.textContent=start+(sfx==='h'?'h':'+');
+        if(start>=target)clearInterval(t);
+      },16);
+      io.unobserve(el);
+    });
+  },{threshold:.5});
+  document.querySelectorAll('.dif-num[data-target]').forEach(function(c){io.observe(c)});
+}();
+
+/* ── EXIT INTENT ── */
+!function(){
+  var modal=document.getElementById('exit-modal'),shown=false;
+  if(!modal)return;
+  function show(){if(shown)return;shown=true;modal.classList.add('show');document.body.style.overflow='hidden'}
+  function hide(){modal.classList.remove('show');document.body.style.overflow=''}
+  document.addEventListener('mouseleave',function(e){if(e.clientY<=0)show()});
+  var lastY=window.scrollY,st;
+  window.addEventListener('scroll',function(){
+    clearTimeout(st);st=setTimeout(function(){
+      var y=window.scrollY;
+      if(y<lastY-120&&y>300)show();
+      lastY=y;
+    },120);
+  });
+  document.getElementById('m-overlay').addEventListener('click',hide);
+  document.getElementById('m-close').addEventListener('click',hide);
+  document.getElementById('m-skip').addEventListener('click',hide);
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')hide()});
+}();
+
+})();
+</script>
+
+<!--
+╔══════════════════════════════════════════════════════════════╗
+║          PUXADORES PARA PORTAS — CATÁLOGO PREMIUM           ║
+║                  catalogo-puxadores.html                     ║
+╠══════════════════════════════════════════════════════════════╣
+║  COMO HOSPEDAR NO GITHUB PAGES (gratuito):                  ║
+║                                                              ║
+║  1. Acesse github.com e crie um repositório público,        ║
+║     ex: "catalogo-puxadores"                                ║
+║                                                              ║
+║  2. Renomeie este arquivo para "index.html" e faça upload   ║
+║     (arraste o arquivo para a aba "Code" do repositório)    ║
+║                                                              ║
+║  3. Vá em Settings → Pages                                  ║
+║     Source: "Deploy from a branch"                          ║
+║     Branch: main  /  Folder: / (root)                       ║
+║     Clique em Save                                           ║
+║                                                              ║
+║  4. Aguarde ~2 minutos. Seu catálogo estará em:             ║
+║     https://SEU-USUARIO.github.io/catalogo-puxadores/       ║
+║                                                              ║
+╠══════════════════════════════════════════════════════════════╣
+║  MENSAGEM WHATSAPP PRONTA:                                   ║
+║                                                              ║
+║  Olá [Nome]! 👋                                             ║
+║                                                              ║
+║  Sou [Seu Nome] da Puxadores Para Portas, Marília-SP.       ║
+║                                                              ║
+║  Preparamos um *catálogo exclusivo* com nossas coleções     ║
+║  premium — especialmente para profissionais como você.       ║
+║                                                              ║
+║  🔗 Acesse: https://SEU-USUARIO.github.io/catalogo/         ║
+║                                                              ║
+║  ⬛ Preto Fosco  🔲 Inox Escovado  ✨ Inox Polido           ║
+║  🥇 Ouro Velho Antique  🟤 Aço Corten                      ║
+║                                                              ║
+║  📐 Medidas de 30 cm até 2,5 m                              ║
+║  💳 10% OFF no PIX                                          ║
+║                                                              ║
+║  Posso enviar uma cotação para o seu projeto?               ║
+╚══════════════════════════════════════════════════════════════╝
+-->
+</body>
+</html>
