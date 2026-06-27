@@ -1,0 +1,9 @@
+# Local Netlify folder
+.netlify
+
+# Ignore everything in home except tracked folders
+/*
+!/.gitignore
+!/README.md
+!/index.html
+!/continuous-memory/
