@@ -134,14 +134,26 @@ python .kimi-code/skills/continuous-memory/scripts/memory_search.py \
   --limit 5
 ```
 
-### 4. Auto-backup to cloud
+### 4. Sync all Markdown memory to Ruflo (batch import, fast)
+
+```bash
+python .kimi-code/skills/continuous-memory/scripts/sync_all_to_ruflo.py
+```
+
+This generates a single JSON export and calls `claude-flow memory import` once,
+avoiding the ~30-60s ONNX model load per entry.
+
+### 5. Auto-backup to cloud
+
+For this project the cloud mirror uses the existing private Git repo in the
+user home (`C:\Users\humbe`) that Claude Code configured:
 
 ```bash
 # Run once to test
-bash .kimi-code/skills/continuous-memory/scripts/auto_backup.sh
+bash .kimi-code/skills/continuous-memory/scripts/auto_backup_home.sh
 
-# Or schedule with cron (Linux/Mac) or Task Scheduler (Windows)
-*/15 * * * * bash /path/to/auto_backup.sh
+# Windows Task Scheduler already runs it every 15 minutes as
+# "ContinuousMemoryBackup".
 ```
 
 ## Sync Strategy
@@ -149,14 +161,22 @@ bash .kimi-code/skills/continuous-memory/scripts/auto_backup.sh
 Every memory write follows this order:
 
 1. **Write Markdown** in `memory/` or `.kimi-code/memory/`
-2. **Sync to Ruflo** via `npx claude-flow memory store` (if Ruflo is active)
-3. **Queue for cloud backup** (auto-commit on next cron run)
+2. **Sync to Ruflo** via `npx claude-flow memory store` (if `--sync-ruflo` is set)
+3. **Batch sync** all Markdown files to Ruflo via `sync_all_to_ruflo.py` (fast import)
+4. **Queue for cloud backup** (auto-commit on next scheduler run)
 
 Every memory read follows this order:
 
-1. Search Ruflo AgentDB via `npx claude-flow memory search`
-2. Fallback to `grep` in Markdown mirror
+1. Search Markdown mirror with `memory_search.py`
+2. Search Ruflo AgentDB via `npx claude-flow memory search` (semantic)
 3. Fallback to cloud `git pull` if local missing
+
+### Performance note
+
+`claude-flow memory store/search` reloads the ONNX embedder on every cold
+start (~30-60s on Windows). `sync_all_to_ruflo.py` avoids this by using a
+single `memory import` call. Individual `store` operations are kept for
+interactive writes with `--sync-ruflo` and use a 300s timeout.
 
 ## Cloud Backup
 
@@ -168,38 +188,55 @@ Why Git:
 - Version history built-in
 - Works offline
 - Syncs across machines
-- No new API keys needed (just SSH key)
+- Credentials cached via Git Credential Manager (no tokens in scripts)
 
-### Setup
+### Setup for this project
 
-1. Create a private repo on GitHub/GitLab: `project-memory`
-2. Add SSH key to your account
-3. Run init:
+This project reuses the private repo already configured in the user home by
+Claude Code. The mirror lives at:
+
+```
+C:\Users\humbe\continuous-memory\ruflo-main\
+```
+
+and is pushed to:
+
+```
+https://github.com/humbertocarloslouvato-boop/catalogo-puxadores.git
+```
+
+Run the backup manually:
+
+```bash
+bash .kimi-code/skills/continuous-memory/scripts/auto_backup_home.sh
+```
+
+### Generic setup (new project)
+
+1. Create a private repo on GitHub/GitLab
+2. Run init:
 
 ```bash
 python .kimi-code/skills/continuous-memory/scripts/init_memory.py \
   --repo "git@github.com:youruser/project-memory.git"
 ```
 
-The script will:
-- Clone the repo to `~/.continuous-memory/<project>/`
-- Create symlinks to `memory/` and `.kimi-code/memory/`
-- Set up auto-backup
-
 ## Auto-Backup
 
 The backup script:
 
-1. Exports Ruflo memory snapshot to RVF/Markdown
-2. Adds new/modified memory files
-3. Commits with timestamp
-4. Pushes to cloud repo
+1. Copies Markdown memory files to the cloud mirror
+2. Copies the Ruflo AgentDB (`.swarm/`) for vector memory portability
+3. Copies the Continuous Memory skill scripts themselves
+4. Commits with timestamp
+5. Pushes to the private cloud repo
 
 ```bash
-bash .kimi-code/skills/continuous-memory/scripts/auto_backup.sh
+bash .kimi-code/skills/continuous-memory/scripts/auto_backup_home.sh
 ```
 
-For Windows Task Scheduler or cron, run it every 15 minutes.
+A Windows Task Scheduler task named `ContinuousMemoryBackup` already runs this
+every 15 minutes.
 
 ## Cross-Agent Memory
 
@@ -215,6 +252,9 @@ bash .kimi-code/skills/continuous-memory/scripts/memory_store.sh \
 # Search
 bash .kimi-code/skills/continuous-memory/scripts/memory_search.sh \
   "authentication patterns"
+
+# Batch sync all Markdown memory to Ruflo (fast)
+python .kimi-code/skills/continuous-memory/scripts/sync_all_to_ruflo.py
 ```
 
 ### For Claude Code
