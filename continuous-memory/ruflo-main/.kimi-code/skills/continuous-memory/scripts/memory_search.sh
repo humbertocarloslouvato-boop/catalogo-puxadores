@@ -4,6 +4,10 @@
 
 set -e
 
+export PYTHONIOENCODING=utf-8
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+
 QUERY="$1"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
