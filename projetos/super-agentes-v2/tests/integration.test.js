@@ -38,11 +38,11 @@ test('API pipeline.js existe', async () => {
   assert.ok(code.includes('4 estratégias'));
 });
 
-test('API ml-scraper.js existe', async () => {
-  const code = await readFile('api/ml-scraper.js', 'utf-8');
+test('API marketplace-scrape.js existe', async () => {
+  const code = await readFile('api/marketplace-scrape.js', 'utf-8');
   
   assert.ok(code.includes('export default'));
-  assert.ok(code.includes('fetch'));
+  assert.ok(code.includes('deepseek'));
 });
 
 test('API proxy.js existe', async () => {

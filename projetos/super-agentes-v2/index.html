@@ -1150,7 +1150,7 @@ function enviarEmail(email, produto, name) {
   fecharModal();
 }
 
-function copiarTemplate(name, produto, moq) {
+function copiarTemplate(name, produto, ncm, fob, moq) {
   const nome = document.getElementById('rfqNome')?.value || '[SEU NOME]';
   const empresa = document.getElementById('rfqEmpresa')?.value || '[SUA EMPRESA]';
   const cnpj = document.getElementById('rfqCnpj')?.value || '';
@@ -1159,7 +1159,7 @@ function copiarTemplate(name, produto, moq) {
   const oem = document.getElementById('rfqOem')?.value || '';
   const cnpjLine = cnpj ? `\nCNPJ: ${cnpj}` : '';
   const oemLine = oem ? `\nPersonalização: ${oem}` : '';
-  const template = `Subject: RFQ - ${produto} for Brazilian Market - ${empresa}\n\nDear ${name} Sales Team,\n\nMy name is ${nome}, I am the buyer at ${empresa}, a Brazilian e-commerce company.\n\nWe are interested in: ${produto}\n\nPlease quote for:\n- Product: ${produto}\n- Quantity: ${qtd} units${oemLine}\n- Incoterms: FOB\n- Payment: 30% T/T upfront + 70% against BL\n\nPlease provide:\n1. FOB price per unit (USD)\n2. MOQ\n3. Sample price + DHL cost to Brazil\n4. Production lead time\n5. Certifications available\n6. OEM capability\n7. Trade Assurance availability\n\nAbout us:${cnpjLine}\n- Market: Brazil (200M+ population)\n\nLooking forward to your quote.\n\nBest regards,\n${nome}\n${empresa}\n${meuEmail}`;
+  const template = `Subject: RFQ - ${produto} for Brazilian Market - ${empresa}\n\nDear ${name} Sales Team,\n\nMy name is ${nome}, I am the buyer at ${empresa}, a Brazilian e-commerce company.\n\nWe are interested in: ${produto} (NCM ${ncm})\n\nPlease quote for:\n- Product: ${produto}\n- NCM: ${ncm}\n- Target FOB: ${fob}\n- Quantity: ${qtd} units${oemLine}\n- Incoterms: FOB\n- Payment: 30% T/T upfront + 70% against BL\n\nPlease provide:\n1. FOB price per unit (USD)\n2. MOQ\n3. Sample price + DHL cost to Brazil\n4. Production lead time\n5. Certifications available\n6. OEM capability\n7. Trade Assurance availability\n\nAbout us:${cnpjLine}\n- Market: Brazil (200M+ population)\n\nLooking forward to your quote.\n\nBest regards,\n${nome}\n${empresa}\n${meuEmail}`;
   navigator.clipboard?.writeText(template).then(() => showToast('📋 RFQ copiado!')).catch(() => showToast('Erro'));
 }
 
@@ -1368,8 +1368,23 @@ async function sourcingChina() {
   const el = document.getElementById('intelSourcingResult');
   el.innerHTML = `<div class="alert alert-info">🇨🇳 Buscando fornecedores para "${produto}"...</div>`;
   try {
-    const r = await callAI([{role:'user',content:`Encontre fornecedores reais para "${produto}" em Alibaba/MIC/GlobalSources. Retorne JSON: product, ncm, suppliers[{name,platform,fob_usd,moq,location,certifications[],factory_confidence,estimated_landed_brl}], best_platform.`}],800);
-    const d=JSON.parse(r.content);
+    const r = await callAI([{role:'user',content:`Encontre fornecedores reais para "${produto}" em Alibaba/MIC/GlobalSources. Retorne APENAS JSON sem markdown: { product, ncm, suppliers[{name,platform,fob_usd,moq,location,certifications[],factory_confidence,estimated_landed_brl}], best_platform }`}],800);
+    
+    // 4 estratégias de parse JSON
+    const content = typeof r.content === 'string' ? r.content : JSON.stringify(r.content);
+    let d;
+    try { d = JSON.parse(content); }
+    catch(e1) {
+      try { d = JSON.parse(content.replace(/```json\s*|```/g, '').trim()); }
+      catch(e2) {
+        try { const a=content.indexOf('{'), b=content.lastIndexOf('}'); if(a===-1||b===-1) throw Error; d=JSON.parse(content.substring(a,b+1)); }
+        catch(e3) {
+          try { const a=content.indexOf('['), b=content.lastIndexOf(']'); if(a===-1||b===-1) throw Error; const arr=JSON.parse(content.substring(a,b+1)); d=Array.isArray(arr)?{suppliers:arr}:arr; }
+          catch(e4) { throw new Error('IA não retornou JSON válido'); }
+        }
+      }
+    }
+    
     el.innerHTML=`<div class="result-row"><span>Produto</span><span><strong>${d.product||produto}</strong></span></div><div class="result-row"><span>NCM</span><span>${d.ncm||'--'}</span></div><div class="result-row"><span>Plataforma</span><span>${d.best_platform||'--'}</span></div>${(d.suppliers||[]).map(s=>`<div class="supplier-card"><div class="info"><strong>🏭 ${s.name}</strong><br><span style="font-size:.78em">${s.platform} · FOB $${s.fob_usd} · MOQ ${s.moq} · ${s.location}</span><br><span style="font-size:.72em">Score: ${s.factory_confidence}/100 | Landed: R$${s.estimated_landed_brl}</span></div><div class="actions"><button class="btn btn-sm btn-email" onclick="switchTab('forn')">📧 Contato</button></div></div>`).join('')}`;
     TEIA.registrar('intel_sourcing',{produto,...d});
   } catch(e) { el.innerHTML=`<div class="alert alert-err">❌ ${e.message}</div>`; }
