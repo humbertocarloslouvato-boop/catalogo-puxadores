@@ -272,7 +272,13 @@ function switchTab(tab, btn) {
   }
 
   document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
+  if (btn) {
+    btn.classList.add('active');
+  } else {
+    // Highlight pelo nome da aba quando chamado programaticamente
+    const navBtn = document.querySelector(`nav button[onclick*="'${tab}'"]`);
+    if (navBtn) navBtn.classList.add('active');
+  }
 
   // Se já tem cache desta aba, restaura em vez de regenerar
   if (TAB_CACHE[tab]) {
@@ -293,7 +299,7 @@ function switchTab(tab, btn) {
 // Força regeneração de uma aba (quando dados mudam via pipeline)
 function refreshTab(tab) {
   delete TAB_CACHE[tab];
-  if (currentTab === tab) switchTab(tab);
+  switchTab(tab);  // sempre troca, mesmo de outra aba
 }
 
 // ============================================================
