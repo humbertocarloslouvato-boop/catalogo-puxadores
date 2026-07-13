@@ -1237,42 +1237,125 @@ async function escanearMarketplace() {
   const nicho = document.getElementById('intelNicho').value.trim();
   if (!nicho) { showToast('⚠️ Digite um nicho'); return; }
   const el = document.getElementById('intelScanResult');
-  const key = getKey();
-  if (!key) { el.innerHTML = `<div class="alert alert-err">❌ Configure a chave API em ⚙️ IA</div>`; return; }
-  el.innerHTML = `<div class="alert alert-info">🔍 Análise completa de "${nicho}" nos marketplaces BR (ML/Shopee/Amazon/Magalu/TikTok)...</div>`;
+  el.innerHTML = `<div class="alert alert-info">🔍 Análise completa de "${nicho}"...</div>`;
   try {
-    const r = await fetch('/api/market-analysis', {
+    const r = await fetch('/api/marketplace-scrape', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ product: nicho, api_key: key })
+      body: JSON.stringify({ 
+        product: nicho,
+        api_key: getKey()
+      })
     });
     if (!r.ok) throw new Error((await r.json().catch(()=>({}))).error || 'HTTP ' + r.status);
-    const { analysis: a } = await r.json();
-
-    const badge = a.veredito?.tipo === 'GO' ? 'badge-go' : a.veredito?.tipo === 'COND' ? 'badge-cond' : 'badge-nogo';
-    const dp = a.distribuicaoPrecos || {};
-
-    el.innerHTML = `
+    const data = await r.json();
+    const { results, summary } = data;
+    
+    let html = `
       <div style="margin-bottom:12px">
-        <strong>📊 Análise de Mercado: ${nicho}</strong>
-        <span class="${badge}" style="margin-left:8px">${a.veredito?.tipo || '—'}</span>
+        <strong>📊 Resultados do Scraping Real</strong>
+        <div style="font-size:.78em;color:#666;margin-top:4px">
+          ${summary.marketplacesWithData} com dados · ${summary.marketplacesBlocked} bloqueados · ${summary.marketplacesError} erros
+        </div>
       </div>
-      <div class="result-row"><span>📈 Distribuição de Preços</span><span></span></div>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px">
-        <div style="background:var(--bg);padding:8px;border-radius:6px;text-align:center"><div style="font-size:.7em;color:#888">P25</div><div style="font-weight:700">R$${dp.p25 || '—'}</div></div>
-        <div style="background:var(--bg);padding:8px;border-radius:6px;text-align:center"><div style="font-size:.7em;color:#888">P50</div><div style="font-weight:700">R$${dp.p50 || '—'}</div></div>
-        <div style="background:var(--bg);padding:8px;border-radius:6px;text-align:center"><div style="font-size:.7em;color:#888">P75</div><div style="font-weight:700">R$${dp.p75 || '—'}</div></div>
-        <div style="background:var(--bg);padding:8px;border-radius:6px;text-align:center"><div style="font-size:.7em;color:#888">P90</div><div style="font-weight:700">R$${dp.p90 || '—'}</div></div>
-      </div>
-      <div class="result-row"><span>🎯 Veredito</span><span class="${badge}">Preço-alvo: R$${a.veredito?.precoAlvo || '—'}</span></div>
-      <p style="font-size:.78em;color:#666;margin:6px 0 12px;line-height:1.4">${a.veredito?.estrategia || ''}</p>
-      ${(a.topVendedores||[]).length ? `<strong>🏆 Top Vendedores</strong><div style="margin-top:6px">${a.topVendedores.map(v => `<div class="result-row"><span>${v.nome} (${v.marketplace})</span><span><strong>${v.vendasMes} vendas/mês</strong></span></div>`).join('')}</div>` : ''}
-      ${(a.reclamacoes||[]).length ? `<div style="margin-top:12px"><strong>😤 Reclamações Recorrentes (oportunidades)</strong>${a.reclamacoes.map(r => `<div style="font-size:.78em;color:#c44;padding:4px 0;border-bottom:1px solid #eee">• ${r}</div>`).join('')}</div>` : ''}
-      ${(a.tendencias||[]).length ? `<div style="margin-top:12px"><strong>📈 Tendências Emergentes</strong>${a.tendencias.map(t => `<div style="font-size:.78em;color:var(--g);padding:4px 0;border-bottom:1px solid #eee">• ${t}</div>`).join('')}</div>` : ''}
-      ${(a.gaps||[]).length ? `<div style="margin-top:12px"><strong>🕳️ Gaps de Catálogo</strong>${a.gaps.map(g => `<div style="font-size:.78em;color:var(--b);padding:4px 0;border-bottom:1px solid #eee">• ${g}</div>`).join('')}</div>` : ''}
-      ${a.scoreNicho ? `<div class="result-row" style="margin-top:10px"><span>Score do Nicho</span><span class="badge-go" style="font-weight:700">${a.scoreNicho}/100</span></div>` : ''}
     `;
-    TEIA.registrar('intel_scanner', { termo: nicho, score: a.scoreNicho, tipo: a.veredito?.tipo });
+
+    // Mercado Livre
+    if (results.mercadolivre && !results.mercadolivre.error && !results.mercadolivre.blocked) {
+      const ml = results.mercadolivre;
+      html += `
+        <div style="background:var(--bg);padding:12px;border-radius:8px;margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <strong style="color:#ffe600">🛒 Mercado Livre</strong>
+            <span style="font-size:.78em;color:#888">${ml.totalResults} resultados</span>
+          </div>
+          <div class="result-row"><span>📈 Distribuição de Preços</span><span></span></div>
+          <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin:6px 0 10px">
+            <div style="background:#fff;padding:6px;border-radius:6px;text-align:center"><div style="font-size:.68em;color:#888">Min</div><div style="font-weight:700;font-size:.9em">R$${ml.priceDistribution.min}</div></div>
+            <div style="background:#fff;padding:6px;border-radius:6px;text-align:center"><div style="font-size:.68em;color:#888">P25</div><div style="font-weight:700;font-size:.9em">R$${ml.priceDistribution.p25}</div></div>
+            <div style="background:#fff;padding:6px;border-radius:6px;text-align:center"><div style="font-size:.68em;color:#888">P50</div><div style="font-weight:700;font-size:.9em">R$${ml.priceDistribution.p50}</div></div>
+            <div style="background:#fff;padding:6px;border-radius:6px;text-align:center"><div style="font-size:.68em;color:#888">P75</div><div style="font-weight:700;font-size:.9em">R$${ml.priceDistribution.p75}</div></div>
+            <div style="background:#fff;padding:6px;border-radius:6px;text-align:center"><div style="font-size:.68em;color:#888">P90</div><div style="font-weight:700;font-size:.9em">R$${ml.priceDistribution.p90}</div></div>
+            <div style="background:#fff;padding:6px;border-radius:6px;text-align:center"><div style="font-size:.68em;color:#888">Max</div><div style="font-weight:700;font-size:.9em">R$${ml.priceDistribution.max}</div></div>
+          </div>
+          <div class="result-row"><span>🏆 Top Vendedores</span><span></span></div>
+          ${ml.topSellers.map(s => `
+            <div style="font-size:.78em;padding:4px 0;border-bottom:1px solid #eee">
+              <strong>${s.name}</strong> (nível ${s.level}) · ${s.sold} vendidos · R$${s.price}
+            </div>
+          `).join('')}
+        </div>
+      `;
+    } else if (results.mercadolivre?.error) {
+      html += `<div class="alert alert-err">⚠️ Mercado Livre: ${results.mercadolivre.error}</div>`;
+    }
+
+    // Shopee
+    if (results.shopee) {
+      if (results.shopee.blocked) {
+        html += `<div class="alert alert-warn">🛍️ Shopee: ${results.shopee.message} <a href="${results.shopee.manualUrl}" target="_blank" style="color:var(--b)">Abrir manualmente ↗</a></div>`;
+      } else if (results.shopee.products) {
+        const sh = results.shopee;
+        html += `
+          <div style="background:var(--bg);padding:12px;border-radius:8px;margin-bottom:10px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+              <strong style="color:#ee4d2d">🛍️ Shopee</strong>
+              <span style="font-size:.78em;color:#888">${sh.totalResults} produtos</span>
+            </div>
+            ${sh.products.slice(0, 5).map(p => `
+              <div style="font-size:.78em;padding:4px 0;border-bottom:1px solid #eee">
+                ${p.shopName} · R$${p.price.toFixed(2)} · ${p.sold} vendidos · ⭐${p.rating.toFixed(1)}
+              </div>
+            `).join('')}
+          </div>
+        `;
+      }
+    }
+
+    // Amazon
+    if (results.amazon) {
+      if (results.amazon.blocked) {
+        html += `<div class="alert alert-warn">📦 Amazon: ${results.amazon.message} <a href="${results.amazon.manualUrl}" target="_blank" style="color:var(--b)">Abrir manualmente ↗</a></div>`;
+      } else if (results.amazon.products) {
+        const am = results.amazon;
+        html += `
+          <div style="background:var(--bg);padding:12px;border-radius:8px;margin-bottom:10px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+              <strong style="color:#ff9900">📦 Amazon</strong>
+              <span style="font-size:.78em;color:#888">${am.totalResults} produtos</span>
+            </div>
+            <div class="result-row"><span>📈 Distribuição de Preços</span><span></span></div>
+            <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin:6px 0 10px">
+              <div style="background:#fff;padding:6px;border-radius:6px;text-align:center"><div style="font-size:.68em;color:#888">Min</div><div style="font-weight:700;font-size:.9em">R$${am.priceDistribution.min}</div></div>
+              <div style="background:#fff;padding:6px;border-radius:6px;text-align:center"><div style="font-size:.68em;color:#888">P25</div><div style="font-weight:700;font-size:.9em">R$${am.priceDistribution.p25}</div></div>
+              <div style="background:#fff;padding:6px;border-radius:6px;text-align:center"><div style="font-size:.68em;color:#888">P50</div><div style="font-weight:700;font-size:.9em">R$${am.priceDistribution.p50}</div></div>
+              <div style="background:#fff;padding:6px;border-radius:6px;text-align:center"><div style="font-size:.68em;color:#888">P75</div><div style="font-weight:700;font-size:.9em">R$${am.priceDistribution.p75}</div></div>
+              <div style="background:#fff;padding:6px;border-radius:6px;text-align:center"><div style="font-size:.68em;color:#888">P90</div><div style="font-weight:700;font-size:.9em">R$${am.priceDistribution.p90}</div></div>
+              <div style="background:#fff;padding:6px;border-radius:6px;text-align:center"><div style="font-size:.68em;color:#888">Max</div><div style="font-weight:700;font-size:.9em">R$${am.priceDistribution.max}</div></div>
+            </div>
+            <div class="result-row"><span>📋 Top Produtos</span><span></span></div>
+            ${am.products.slice(0, 5).map(p => `
+              <div style="font-size:.78em;padding:4px 0;border-bottom:1px solid #eee">
+                ${p.title.substring(0, 60)}${p.title.length > 60 ? '...' : ''} · R$${p.price} · ${p.reviews} avaliações
+              </div>
+            `).join('')}
+          </div>
+        `;
+      }
+    }
+
+    // Magalu
+    if (results.magalu?.blocked) {
+      html += `<div class="alert alert-warn">🛒 Magalu: ${results.magalu.message} <a href="${results.magalu.manualUrl}" target="_blank" style="color:var(--b)">Abrir manualmente ↗</a></div>`;
+    }
+
+    // TikTok
+    if (results.tiktok?.blocked) {
+      html += `<div class="alert alert-warn">🎵 TikTok Shop: ${results.tiktok.message} <a href="${results.tiktok.manualUrl}" target="_blank" style="color:var(--b)">Abrir manualmente ↗</a></div>`;
+    }
+
+    el.innerHTML = html;
+    TEIA.registrar('intel_scanner', { termo: nicho, marketplaces: summary.marketplacesWithData });
   } catch (e) {
     el.innerHTML = `<div class="alert alert-err">❌ ${e.message}</div>`;
   }
