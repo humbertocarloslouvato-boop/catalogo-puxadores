@@ -521,13 +521,14 @@ function calcularStressTest() {
   const preco = parseFloat(document.getElementById('stPreco').value) || 0;
   const ptax = 5.20;
 
-  // Monte Carlo simplificado
+  // Monte Carlo com ICMS por dentro (fórmula realista)
   let lucros = 0;
   const N = 10000;
+  const fatorImpostos = 1 + 0.16 + 0.05 + 0.1175 + 0.18/(1-0.18) + 0.25*0.05 + 0.005; // II+IPI+PIS+ICMS+AFRMM+Siscomex
   for (let i = 0; i < N; i++) {
-    const fx = ptax * (0.8 + Math.random() * 0.4);
-    const freightVar = 0.7 + Math.random() * 0.6;
-    const landed = fob * fx * (1 + 0.16 + 0.10 + 0.0925 + 0.18) * freightVar + 3;
+    const fx = ptax * (0.85 + Math.random() * 0.30);  // câmbio ±15%
+    const freightVar = 0.8 + Math.random() * 0.4;       // frete ±20%
+    const landed = fob * fx * fatorImpostos * freightVar + 3;
     if (preco > landed) lucros++;
   }
 
@@ -804,12 +805,18 @@ function verRelatorio(nome, ncm, fob, landed, preco, margem, score, verdict) {
   const lucro = preco - landed - cvff - preco*0.07 - 1.50;
   const margemReal = (lucro / preco * 100).toFixed(1);
   const ptax = 5.20;
+  // Buscar truth/evidence do ranking ou pipeline
+  const item = (TEIA.dados.ranking || []).find(r => r.nome === nome) || {};
+  const truthIcon = { unavailable:'🔴', estimated:'🟡', source_observed:'🟢', cross_checked:'✅', quote_confirmed:'🏆', outcome_confirmed:'⭐' };
+  const truthBadge = item.truthLabel || '🟡 Estimativa IA';
+  const confidence = item.evidence?.confidence ? Math.round(item.evidence.confidence*100)+'%' : '—';
   
   const modalHTML = `
     <div class="modal-overlay" id="relModal" onclick="if(event.target===this)this.remove()">
       <div class="modal" style="max-width:650px">
         <h3>📊 Relatório — ${nome}</h3>
         <span class="${verdict==='TOP'||verdict==='GO'?'badge-go': verdict==='COND'?'badge-cond':'badge-nogo'}" style="font-size:.75em">${verdict} · Score ${score}/100</span>
+        <span style="font-size:.72em;color:#888;margin-left:6px" title="${truthBadge}">${item.truth ? truthIcon[item.truth] : '🟡'} ${confidence} confiança</span>
         <div style="margin-top:12px">
           <div class="result-row"><span>NCM</span><span>${ncm}</span></div>
           <div class="result-row"><span>FOB China</span><span>$ ${fob.toFixed(2)}</span></div>
@@ -1193,7 +1200,7 @@ function pipeline() {
       </div>
       <div id="pipelineStatus"></div>
     </div>
-    <div class="card"><h2>📋 Histórico</h2>${historico.length?historico.map(l=>`<div class="result-row"><span>${l.dados?.tipo||'Manual'} · ${l.dados?.categoria||'--'}</span><span><span class="badge-go" style="font-size:.7em">✓ OK</span> ${new Date(l.ts).toLocaleString()} · ${l.dados?.tempo||'--'}s</span></div>`).join(''):'<p style="color:#aaa">Nenhuma execução ainda</p>'}<p style="font-size:.75em;color:#aaa;margin-top:8px">⏰ Cron: 06h/18h · Pipeline automático via Hermes</p></div>
+    <div class="card"><h2>📋 Histórico</h2>${historico.length?historico.map(l=>{const tipo=l.dados?.tipo||'Manual';const badge=tipo==='IA'?'badge-go':tipo==='Cron'?'badge-cond':'badge-nogo';return`<div class="result-row"><span><span class="${badge}" style="font-size:.65em">${tipo}</span> · ${l.dados?.categoria||'--'}</span><span><span class="badge-go" style="font-size:.7em">✓ OK</span> ${new Date(l.ts).toLocaleString()} · ${l.dados?.tempo||'--'}s${l.dados?.nichos?` · ${l.dados.nichos} nichos`:''}</span></div>`;}).join(''):'<p style="color:#aaa">Nenhuma execução ainda</p>'}<p style="font-size:.75em;color:#aaa;margin-top:8px">⏰ Cron: 06h/18h · Pipeline automático via Hermes</p></div>
     <div class="card"><h2>🔗 Plataformas Chinesas</h2>${Object.entries(PLATFORMAS_CN).map(([n,u])=>`<div class="result-row"><span>${n}</span><a href="${u}" target="_blank" style="color:var(--b);font-size:.82em">abrir ↗</a></div>`).join('')}</div>
   `;
 }
