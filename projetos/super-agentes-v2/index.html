@@ -200,17 +200,20 @@ function loadState() {
 }
 
 async function loadFromCloud() {
+  let d = null;
   try {
     const r = await fetch('/api/state');
     if (r.ok) {
-      const d = await r.json();
+      d = await r.json();
       if (d && d.state) {
         if (d.state.apiKeys) { window.apiKeys = {...window.apiKeys, ...d.state.apiKeys}; saveKeys(); }
         if (d.state.provider) { window.currentProvider = d.state.provider; localStorage.setItem('sa_provider', d.state.provider); }
       }
     }
-    updateSyncStatus(d?.source === 'kv');
-  } catch(e) { updateSyncStatus(false); }
+  } catch(e) {
+    console.warn('Erro ao carregar do cloud:', e);
+  }
+  updateSyncStatus(d?.source === 'kv');
 }
 
 async function syncToCloud() {
@@ -930,8 +933,6 @@ function renderMLResults(produto, d) {
   main.insertAdjacentHTML('beforeend', modalHTML);
   TEIA.registrar('ml_scrape', { produto, total: d.paging?.total });
 }
-  const termo = document.getElementById('prospTermo').value.trim();
-  el.innerHTML = `<div class="alert alert-info">⚡ Pipeline disparado para "${termo}" — Discovery + Scanner + Sourcing via IA...</div>`;
 
 async function dispararPipelineCategoria() {
   const termo = document.getElementById('prospTermo').value.trim();
