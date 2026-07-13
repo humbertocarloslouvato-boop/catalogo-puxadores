@@ -632,30 +632,30 @@ function prosp() {
 // ============================================================
 
 const DADOS_NICHOS = {
-  'bebedouro pet': { ncm:'8421.21.00', fob:8.00, landed:17.25, preco:89.90, margem:0.32, conc:6, score:72 },
-  'fonte água gato': { ncm:'8421.21.00', fob:6.50, landed:14.80, preco:79.90, margem:0.35, conc:4, score:78 },
-  'coleira gps': { ncm:'8526.91.00', fob:15.00, landed:42.00, preco:149.90, margem:0.28, conc:3, score:70 },
-  'cama ortopédica': { ncm:'9404.90.00', fob:12.00, landed:35.00, preco:129.90, margem:0.22, conc:8, score:62 },
-  'arranhador': { ncm:'4421.99.00', fob:8.50, landed:22.00, preco:79.90, margem:0.30, conc:5, score:68 },
-  'comedouro inclinado': { ncm:'3924.90.00', fob:3.50, landed:9.80, preco:49.90, margem:0.38, conc:3, score:82 },
-  'brinquedo laser gato': { ncm:'9503.00.10', fob:1.80, landed:6.50, preco:39.90, margem:0.42, conc:7, score:74 },
-  'puxador inox': { ncm:'8302.42.00', fob:2.20, landed:7.50, preco:29.90, margem:0.35, conc:12, score:65 },
-  'organizador gaveta': { ncm:'3924.90.00', fob:1.80, landed:5.50, preco:24.90, margem:0.40, conc:9, score:68 },
-  'luminária led': { ncm:'9405.40.00', fob:4.50, landed:15.00, preco:59.90, margem:0.28, conc:15, score:58 },
-  'prateleira flutuante': { ncm:'4421.99.00', fob:3.00, landed:10.00, preco:39.90, margem:0.32, conc:6, score:70 },
-  'tapete': { ncm:'5703.30.00', fob:5.00, landed:16.00, preco:59.90, margem:0.25, conc:20, score:52 },
-  'faixa elástica': { ncm:'9506.91.00', fob:2.80, landed:8.50, preco:69.90, margem:0.27, conc:2, score:85 },
-  'corda pular': { ncm:'9506.91.00', fob:2.50, landed:7.80, preco:79.90, margem:0.25, conc:3, score:88 },
-  'colchonete yoga': { ncm:'9506.91.00', fob:6.00, landed:18.00, preco:69.90, margem:0.20, conc:8, score:60 },
-  'garrafa térmica': { ncm:'9617.00.10', fob:3.50, landed:12.00, preco:49.90, margem:0.30, conc:10, score:64 },
-  'rolo espuma': { ncm:'9506.91.00', fob:2.00, landed:7.00, preco:39.90, margem:0.35, conc:4, score:76 },
-  'luva academia': { ncm:'9506.91.00', fob:1.90, landed:6.20, preco:49.90, margem:0.25, conc:6, score:82 },
-  'caneleira peso': { ncm:'9506.91.00', fob:2.20, landed:7.50, preco:59.90, margem:0.29, conc:1, score:78 },
-  'mordedor silicone': { ncm:'3926.90.90', fob:0.80, landed:3.50, preco:19.90, margem:0.45, conc:5, score:80 },
-  'babador bandana': { ncm:'6111.20.00', fob:1.20, landed:4.50, preco:24.90, margem:0.40, conc:4, score:75 },
-  'carregador rápido': { ncm:'8504.40.10', fob:3.50, landed:12.00, preco:49.90, margem:0.22, conc:25, score:48 },
-  'cabo usb-c': { ncm:'8544.42.00', fob:0.60, landed:2.80, preco:19.90, margem:0.30, conc:30, score:42 },
-  'fone bluetooth': { ncm:'8518.30.00', fob:5.00, landed:18.00, preco:79.90, margem:0.20, conc:20, score:50 },
+  'bebedouro pet': { ncm:'8421.21.00', fob:8.00, landed:17.25, preco:89.90, margem:0.32, conc:6, score:72, truth:'estimated', truthLabel:'🟡 Estimativa IA', evidence:{source:'static-fallback',confidence:0.6} },
+  'fonte água gato': { ncm:'8421.21.00', fob:6.50, landed:14.80, preco:79.90, margem:0.35, conc:4, score:78, truth:'estimated', truthLabel:'🟡 Estimativa IA', evidence:{source:'static-fallback',confidence:0.6} },
+  'coleira gps': { ncm:'8526.91.00', fob:15.00, landed:42.00, preco:149.90, margem:0.28, conc:3, score:70, truth:'estimated', truthLabel:'🟡 Estimativa IA', evidence:{source:'static-fallback',confidence:0.6} },
+  'cama ortopédica': { ncm:'9404.90.00', fob:12.00, landed:35.00, preco:129.90, margem:0.22, conc:8, score:62, truth:'estimated', truthLabel:'🟡 Estimativa IA', evidence:{source:'static-fallback',confidence:0.6} },
+  'arranhador': { ncm:'4421.99.00', fob:8.50, landed:22.00, preco:79.90, margem:0.30, conc:5, score:68, truth:'estimated', truthLabel:'🟡 Estimativa IA', evidence:{source:'static-fallback',confidence:0.6} },
+  'comedouro inclinado': { ncm:'3924.90.00', fob:3.50, landed:9.80, preco:49.90, margem:0.38, conc:3, score:82, truth:'estimated', truthLabel:'🟡 Estimativa IA', evidence:{source:'static-fallback',confidence:0.6} },
+  'brinquedo laser gato': { ncm:'9503.00.10', fob:1.80, landed:6.50, preco:39.90, margem:0.42, conc:7, score:74, truth:'estimated', truthLabel:'🟡 Estimativa IA', evidence:{source:'static-fallback',confidence:0.6} },
+  'puxador inox': { ncm:'8302.42.00', fob:2.20, landed:7.50, preco:29.90, margem:0.35, conc:12, score:65, truth:'estimated', truthLabel:'🟡 Estimativa IA', evidence:{source:'static-fallback',confidence:0.6} },
+  'organizador gaveta': { ncm:'3924.90.00', fob:1.80, landed:5.50, preco:24.90, margem:0.40, conc:9, score:68, truth:'estimated', truthLabel:'🟡 Estimativa IA', evidence:{source:'static-fallback',confidence:0.6} },
+  'luminária led': { ncm:'9405.40.00', fob:4.50, landed:15.00, preco:59.90, margem:0.28, conc:15, score:58, truth:'estimated', truthLabel:'🟡 Estimativa IA', evidence:{source:'static-fallback',confidence:0.6} },
+  'prateleira flutuante': { ncm:'4421.99.00', fob:3.00, landed:10.00, preco:39.90, margem:0.32, conc:6, score:70, truth:'estimated', truthLabel:'🟡 Estimativa IA', evidence:{source:'static-fallback',confidence:0.6} },
+  'tapete': { ncm:'5703.30.00', fob:5.00, landed:16.00, preco:59.90, margem:0.25, conc:20, score:52, truth:'estimated', truthLabel:'🟡 Estimativa IA', evidence:{source:'static-fallback',confidence:0.6} },
+  'faixa elástica': { ncm:'9506.91.00', fob:2.80, landed:8.50, preco:69.90, margem:0.27, conc:2, score:85, truth:'estimated', truthLabel:'🟡 Estimativa IA', evidence:{source:'static-fallback',confidence:0.6} },
+  'corda pular': { ncm:'9506.91.00', fob:2.50, landed:7.80, preco:79.90, margem:0.25, conc:3, score:88, truth:'estimated', truthLabel:'🟡 Estimativa IA', evidence:{source:'static-fallback',confidence:0.6} },
+  'colchonete yoga': { ncm:'9506.91.00', fob:6.00, landed:18.00, preco:69.90, margem:0.20, conc:8, score:60, truth:'estimated', truthLabel:'🟡 Estimativa IA', evidence:{source:'static-fallback',confidence:0.6} },
+  'garrafa térmica': { ncm:'9617.00.10', fob:3.50, landed:12.00, preco:49.90, margem:0.30, conc:10, score:64, truth:'estimated', truthLabel:'🟡 Estimativa IA', evidence:{source:'static-fallback',confidence:0.6} },
+  'rolo espuma': { ncm:'9506.91.00', fob:2.00, landed:7.00, preco:39.90, margem:0.35, conc:4, score:76, truth:'estimated', truthLabel:'🟡 Estimativa IA', evidence:{source:'static-fallback',confidence:0.6} },
+  'luva academia': { ncm:'9506.91.00', fob:1.90, landed:6.20, preco:49.90, margem:0.25, conc:6, score:82, truth:'estimated', truthLabel:'🟡 Estimativa IA', evidence:{source:'static-fallback',confidence:0.6} },
+  'caneleira peso': { ncm:'9506.91.00', fob:2.20, landed:7.50, preco:59.90, margem:0.29, conc:1, score:78, truth:'estimated', truthLabel:'🟡 Estimativa IA', evidence:{source:'static-fallback',confidence:0.6} },
+  'mordedor silicone': { ncm:'3926.90.90', fob:0.80, landed:3.50, preco:19.90, margem:0.45, conc:5, score:80, truth:'estimated', truthLabel:'🟡 Estimativa IA', evidence:{source:'static-fallback',confidence:0.6} },
+  'babador bandana': { ncm:'6111.20.00', fob:1.20, landed:4.50, preco:24.90, margem:0.40, conc:4, score:75, truth:'estimated', truthLabel:'🟡 Estimativa IA', evidence:{source:'static-fallback',confidence:0.6} },
+  'carregador rápido': { ncm:'8504.40.10', fob:3.50, landed:12.00, preco:49.90, margem:0.22, conc:25, score:48, truth:'estimated', truthLabel:'🟡 Estimativa IA', evidence:{source:'static-fallback',confidence:0.6} },
+  'cabo usb-c': { ncm:'8544.42.00', fob:0.60, landed:2.80, preco:19.90, margem:0.30, conc:30, score:42, truth:'estimated', truthLabel:'🟡 Estimativa IA', evidence:{source:'static-fallback',confidence:0.6} },
+  'fone bluetooth': { ncm:'8518.30.00', fob:5.00, landed:18.00, preco:79.90, margem:0.20, conc:20, score:50, truth:'estimated', truthLabel:'🟡 Estimativa IA', evidence:{source:'static-fallback',confidence:0.6} },
 };
 
 function rodarCategoria(catNome) {
@@ -690,10 +690,10 @@ function gerarRanking(nichos, catNome) {
     if (filtrados.length > 0) {
       resultados = filtrados.sort((a,b) => b.score - a.score);
     } else {
-      resultados = nichos.map(n => ({ nome: n, ...(DADOS_NICHOS[n] || { ncm:'0000.00.00', fob:1, landed:5, preco:19.90, margem:0.15, conc:10, score:40 }) })).sort((a,b) => b.score - a.score);
+      resultados = nichos.map(n => ({ nome: n, ...(DADOS_NICHOS[n] || { ncm:'0000.00.00', fob:1, landed:5, preco:19.90, margem:0.15, conc:10, score:40, truth:'estimated', truthLabel:'🟡 Estimativa IA', evidence:{source:'static-fallback',confidence:0.6} }) })).sort((a,b) => b.score - a.score);
     }
   } else {
-    resultados = nichos.map(n => ({ nome: n, ...(DADOS_NICHOS[n] || { ncm:'0000.00.00', fob:1, landed:5, preco:19.90, margem:0.15, conc:10, score:40 }) })).sort((a,b) => b.score - a.score);
+    resultados = nichos.map(n => ({ nome: n, ...(DADOS_NICHOS[n] || { ncm:'0000.00.00', fob:1, landed:5, preco:19.90, margem:0.15, conc:10, score:40, truth:'estimated', truthLabel:'🟡 Estimativa IA', evidence:{source:'static-fallback',confidence:0.6} }) })).sort((a,b) => b.score - a.score);
   }
 
   // Limitar a 8 resultados
@@ -780,6 +780,24 @@ function abrirFornecedoresModal(produto) {
   TEIA.registrar('fornecedores_busca', { produto });
 }
 
+async function prospectarIA() {
+  const termo = document.getElementById('prospTermo').value.trim();
+  if (!termo) return;
+  const el = document.getElementById('prospResult');
+  el.innerHTML = `<div class="alert alert-info">🤖 Analisando com IA via pipeline...</div>`;
+  const key = getKey();
+  if (!key) { el.innerHTML = `<div class="alert alert-err">❌ Configure a chave API em ⚙️ IA</div>`; return; }
+  try {
+    const r = await fetch('/api/pipeline', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ category: termo, api_key: key, provider: window.currentProvider }) });
+    if (!r.ok) throw new Error((await r.json().catch(()=>({}))).error || 'HTTP '+r.status);
+    const d = await r.json();
+    const nichos = d.nichos || [];
+    const badge = d.go > 0 ? 'badge-go' : d.total > 0 ? 'badge-cond' : 'badge-nogo';
+    el.innerHTML = `<div class="result-row"><span>Nicho</span><span><strong>${termo}</strong></span></div><div class="result-row"><span>Nichos</span><span>${nichos.length}</span></div><div class="result-row"><span>GO / TOP</span><span>${d.go||0} GO · ${d.top||0} TOP</span></div><div class="result-row"><span>Recomendação</span><span class="${badge}">${d.go>0?'GO':'COND'}</span></div>${(d.alerts||[]).slice(0,3).map(a=>`<div class="alert alert-warn">${a}</div>`).join('')}${nichos.length>0?`<button class="btn btn-sm" style="margin-top:8px" onclick="gerarRanking(['${termo}'],'Busca')">📊 Ver Ranking</button>`:''}`;
+    TEIA.registrar('prospeccao_ia', { termo, total: nichos.length, go: d.go });
+  } catch(e) { el.innerHTML = `<div class="alert alert-err">❌ ${e.message}</div>`; }
+}
+
 function verRelatorio(nome, ncm, fob, landed, preco, margem, score, verdict) {
   const el = document.getElementById('main');
   const cvff = preco <= 25 ? 4.50 : preco <= 55 ? 5.50 : preco <= 90 ? 7.00 : 8.00;
@@ -815,22 +833,38 @@ function verRelatorio(nome, ncm, fob, landed, preco, margem, score, verdict) {
   TEIA.registrar('relatorio_produto', { nome, ncm, margem: margemReal });
 }
 
-function dispararPipelineCategoria() {
+async function dispararPipelineCategoria() {
   const termo = document.getElementById('prospTermo').value.trim();
   if (!termo) { showToast('⚠️ Digite um produto primeiro'); return; }
-  
+
   const el = document.getElementById('prospResult');
-  el.innerHTML = `<div class="alert alert-info">⚡ Pipeline disparado para "${termo}" — analisando concorrência, NCM, fornecedores China...</div>`;
-  TEIA.registrar('prospeccao_pipeline', { termo });
-  
-  // Simular pipeline em 3 etapas
-  setTimeout(() => { el.innerHTML += `<div class="alert alert-info" style="margin-top:4px">✅ Fase 1/3: Scanner de mercado (ML/Shopee/Amazon) — concorrência mapeada</div>`; }, 800);
-  setTimeout(() => { el.innerHTML += `<div class="alert alert-info" style="margin-top:4px">✅ Fase 2/3: Sourcing China (Alibaba/1688/MIC) — fornecedores encontrados</div>`; }, 1600);
-  setTimeout(() => {
+  el.innerHTML = `<div class="alert alert-info">⚡ Pipeline disparado para "${termo}" — Discovery + Scanner + Sourcing via IA...</div>`;
+
+  const key = getKey();
+  if (!key) { el.innerHTML += `<div class="alert alert-err">❌ Configure a chave API em ⚙️ IA</div>`; return; }
+
+  try {
+    el.innerHTML += `<div class="alert alert-info" style="margin-top:4px">⏳ Fase 1/3: Scanner de mercado (ML/Shopee/Amazon)...</div>`;
+    const r = await fetch('/api/pipeline', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({ category: termo, api_key: key, provider: window.currentProvider })
+    });
+    if (!r.ok) throw new Error((await r.json().catch(()=>({}))).error || 'HTTP '+r.status);
+    const d = await r.json();
+
+    const produtos = d.nichos || [];
+    produtos.forEach(p => { p.categoria = termo; p.ts = Date.now(); });
+    TEIA.dados.ranking = [...(TEIA.dados.ranking||[]).filter(r=>r.categoria!==termo), ...produtos];
+    try { localStorage.setItem('sa_ranking', JSON.stringify(TEIA.dados.ranking)); } catch(e) {}
+
+    el.innerHTML += `<div class="alert alert-info" style="margin-top:4px">✅ Fase 2/3: Sourcing China — ${produtos.length} nichos encontrados</div>`;
     el.innerHTML += `<div class="alert alert-info" style="margin-top:4px">✅ Fase 3/3: Landed cost + margem — análise fiscal completa</div>`;
-    el.innerHTML += `<button class="btn btn-sm" style="margin-top:8px" onclick="gerarRanking(['${termo}'], 'Busca')">📊 Ver Ranking</button>`;
-    showToast('✅ Pipeline concluído!');
-  }, 2400);
+    el.innerHTML += `<button class="btn btn-sm" style="margin-top:8px" onclick="refreshTab('prosp')">📊 Ver Ranking (${produtos.length} nichos)</button>`;
+    showToast(`✅ Pipeline concluído — ${produtos.length} nichos`);
+    TEIA.registrar('prospeccao_pipeline', { termo, nichos: produtos.length });
+  } catch(e) {
+    el.innerHTML += `<div class="alert alert-err" style="margin-top:4px">❌ ${e.message}</div>`;
+  }
 }
 
 // ============================================================
@@ -987,7 +1021,7 @@ function gerarCotacao(name, email, produto, ncm, fob, moq) {
         <label>Personalização (OEM)</label><select id="rfqOem"><option value="">Sem personalização</option><option value="Marca própria">Marca própria (OEM)</option><option value="Embalagem customizada">Embalagem customizada</option><option value="Manual PT-BR">Manual em português</option></select>
         <label>Mensagem adicional</label><textarea id="rfqMsg" rows="3" placeholder="Detalhes extras para o fornecedor..."></textarea>
         <div style="display:flex;gap:8px;margin-top:16px">
-          <button class="btn" onclick="enviarEmail('${email}','${produto}','${ncm}','${name}','${fob}')">📧 Abrir Email</button>
+          <button class="btn" onclick="enviarEmail('${email}','${produto}','${name}')">📧 Abrir Email</button>
           <button class="btn btn-sm" style="background:var(--y)" onclick="copiarTemplate('${name}','${produto}','${ncm}','${fob}',${moq})">📋 Copiar Template</button>
           <button class="btn btn-sm" style="background:#ccc;color:#555" onclick="fecharModal()">Fechar</button>
         </div>
