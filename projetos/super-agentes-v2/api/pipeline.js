@@ -82,7 +82,7 @@ Retorne APENAS JSON: {"nichos":[{...}]}`;
     const r1 = await fetch(pr.url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${api_key}` },
-      body: JSON.stringify({ model: pr.model, messages: [{ role: 'user', content: prompt }], max_tokens: 2000, temperature: 0.7 }),
+      body: JSON.stringify({ model: pr.model, messages: [{ role: 'user', content: prompt }], max_tokens: 4000, temperature: 0.7 }),
     });
     const d1 = await r1.json();
     if (!r1.ok) return res.status(r1.status).json({ error: d1.error?.message || 'Discovery falhou', raw: d1 });
