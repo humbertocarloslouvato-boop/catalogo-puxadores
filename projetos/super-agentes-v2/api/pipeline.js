@@ -90,11 +90,24 @@ Retorne APENAS JSON: {"nichos":[{...}]}`;
     const content = d1.choices?.[0]?.message?.content || '';
     let data;
     try {
-      const jsonStart = content.indexOf('{');
-      const jsonEnd = content.lastIndexOf('}');
-      data = JSON.parse(content.substring(jsonStart, jsonEnd + 1));
+      // Estratégia 1: tentar JSON direto
+      data = JSON.parse(content);
     } catch {
-      return res.status(500).json({ error: 'JSON inválido da IA', raw: content.substring(0, 300) });
+      try {
+        // Estratégia 2: remover markdown code blocks ```json ... ```
+        const stripped = content.replace(/```json\s*|\s*```/g, '').trim();
+        data = JSON.parse(stripped);
+      } catch {
+        try {
+          // Estratégia 3: extrair entre primeira { e última }
+          const jsonStart = content.indexOf('{');
+          const jsonEnd = content.lastIndexOf('}');
+          if (jsonStart === -1 || jsonEnd === -1) throw new Error('Sem JSON no conteúdo');
+          data = JSON.parse(content.substring(jsonStart, jsonEnd + 1));
+        } catch {
+          return res.status(500).json({ error: 'JSON inválido da IA — a resposta não continha JSON válido', raw: content.substring(0, 500) });
+        }
+      }
     }
 
     const nichos = (data.nichos || []).map(n => {
