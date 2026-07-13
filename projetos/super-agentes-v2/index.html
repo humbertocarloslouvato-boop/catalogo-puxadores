@@ -850,32 +850,73 @@ function verRelatorio(nome, ncm, fob, landed, preco, margem, score, verdict) {
   el.insertAdjacentHTML('beforeend', modalHTML);
   TEIA.registrar('relatorio_produto', { nome, ncm, margem: margemReal });
 }
-
 async function escanearML(produto) {
-  showToast(`🔍 Escaneando Mercado Livre: "${produto}"...`);
+  showToast(`🔍 Buscando "${produto}" no Mercado Livre...`);
+  
   try {
+    // Tentar API pública primeiro
     const q = encodeURIComponent(produto);
-    const r = await fetch(`https://api.mercadolibre.com/sites/MLB/search?q=${q}&limit=10&sort=sold_quantity_desc`);
-    if (!r.ok) throw new Error("ML retornou " + r.status);
+    const r = await fetch(`https://api.mercadolibre.com/sites/MLB/search?q=${q}&limit=8&sort=sold_quantity_desc`);
+    if (!r.ok) throw new Error('API bloqueada');
     const d = await r.json();
-    const sellers = (d.results || []).map(item => ({
-      nome: item.seller?.nickname || "—",
-      titulo: item.title,
-      preco: item.price,
-      vendidos: item.sold_quantity || 0,
-      estrelas: parseFloat(item.seller?.seller_reputation?.transactions?.ratings?.positive || 0),
-      envio_gratis: item.shipping?.free_shipping || false,
-      link: item.permalink,
-      thumbnail: item.thumbnail
-    }));
-    const precos = sellers.map(s => s.preco).filter(Boolean);
-    const stats = precos.length ? { min: Math.min(...precos), max: Math.max(...precos), med: precos.sort((a,b)=>a-b)[Math.floor(precos.length/2)] } : null;
-    const main = document.getElementById("main");
-    const modalHTML = `<div class="modal-overlay" id="mlModal" onclick="if(event.target===this)this.remove()"><div class="modal" style="max-width:700px"><h3>🔍 Mercado Livre — ${produto}</h3><p style="font-size:.82em;color:#888">📊 ${d.paging?.total||"?"} vendedores · dados REAIS da API do ML</p>${stats?`<p style="font-size:.78em">💰 R$${stats.min}–R$${stats.max} · Mediana R$${stats.med}</p>`:""}${sellers.slice(0,8).map(s=>`<div class="supplier-card"><img src="${s.thumbnail}" style="width:60px;height:60px;object-fit:contain;border-radius:4px" onerror="this.style.display="none""><div class="info"><strong style="font-size:.85em">${s.titulo.substring(0,60)}</strong><br><span style="font-size:.78em">🏪 ${s.nome} · ⭐${s.estrelas}</span><br><span style="font-size:.78em">📦 ${s.vendidos}+ vendidos ${s.envio_gratis?"· 🚚 Grátis":""}</span></div><div style="text-align:right"><strong style="font-size:1.1em;color:var(--g)">R$ ${s.preco?.toFixed(2)||"—"}</strong><br><a href="${s.link}" target="_blank" style="font-size:.7em;color:var(--b)">Abrir no ML ↗</a></div></div>`).join("")}<button class="btn btn-sm" style="margin-top:8px;background:#ccc;color:#555" onclick="document.getElementById("mlModal")?.remove()">Fechar</button></div></div>`;
-    main.insertAdjacentHTML("beforeend", modalHTML);
-    TEIA.registrar("ml_scrape", { produto, total: d.paging?.total });
-  } catch(e) { showToast(`❌ ML: ${e.message}`); }
+    // ... (render sellers modal — mesmo código)
+    renderMLResults(produto, d);
+  } catch {
+    // Fallback: abrir busca direta no ML em nova aba
+    const q = encodeURIComponent(produto);
+    window.open(`https://lista.mercadolivre.com.br/${q.replace(/%20/g,'-')}#D[A:${q}]`, '_blank');
+    showToast('🔗 ML aberto em nova aba — veja os vendedores reais');
+    
+    // Mostrar modal com link
+    const main = document.getElementById('main');
+    const modalHTML = `
+      <div class="modal-overlay" id="mlModal" onclick="if(event.target===this)this.remove()">
+        <div class="modal" style="max-width:500px;text-align:center">
+          <h3>🔍 Mercado Livre — ${produto}</h3>
+          <p style="margin:12px 0">A busca foi aberta em uma nova aba do navegador.</p>
+          <p style="font-size:.85em;color:#888">Lá você vê: vendedores reais, preços, avaliações, quantidade vendida.</p>
+          <a href="https://lista.mercadolivre.com.br/${q.replace(/%20/g,'-')}" target="_blank" 
+             style="display:inline-block;margin:8px;padding:10px 20px;background:var(--g);color:#fff;border-radius:6px;text-decoration:none">
+            🔗 Abrir Mercado Livre ↗
+          </a>
+          <button class="btn btn-sm" style="display:block;margin:8px auto;background:#ccc;color:#555" 
+                  onclick="document.getElementById('mlModal')?.remove()">Fechar</button>
+        </div>
+      </div>`;
+    main.insertAdjacentHTML('beforeend', modalHTML);
+    TEIA.registrar('ml_search', { produto });
+  }
 }
+
+function renderMLResults(produto, d) {
+  const sellers = (d.results || []).map(item => ({
+    nome: item.seller?.nickname || '—',
+    titulo: item.title,
+    preco: item.price,
+    vendidos: item.sold_quantity || 0,
+    estrelas: parseFloat(item.seller?.seller_reputation?.transactions?.ratings?.positive || 0),
+    envio_gratis: item.shipping?.free_shipping || false,
+    link: item.permalink,
+    thumbnail: item.thumbnail,
+  }));
+  const precos = sellers.map(s => s.preco).filter(Boolean);
+  const stats = precos.length ? { min: Math.min(...precos), max: Math.max(...precos), med: precos.sort((a,b)=>a-b)[Math.floor(precos.length/2)] } : null;
+  const main = document.getElementById('main');
+  const modalHTML = `
+    <div class="modal-overlay" id="mlModal" onclick="if(event.target===this)this.remove()">
+      <div class="modal" style="max-width:700px">
+        <h3>🔍 Mercado Livre — ${produto}</h3>
+        <p style="font-size:.82em;color:#888">📊 ${d.paging?.total||'?'} vendedores · dados REAIS</p>
+        ${stats?`<p style="font-size:.78em">💰 R$${stats.min}–R$${stats.max} · Mediana R$${stats.med}</p>`:''}
+        ${sellers.slice(0,8).map(s=>`<div class="supplier-card"><img src="${s.thumbnail}" style="width:60px;height:60px;object-fit:contain;border-radius:4px" onerror="this.style.display='none'"><div class="info"><strong style="font-size:.85em">${s.titulo.substring(0,60)}</strong><br><span style="font-size:.78em">🏪 ${s.nome} · ⭐${s.estrelas}</span><br><span style="font-size:.78em">📦 ${s.vendidos}+ vendidos ${s.envio_gratis?'· 🚚 Grátis':''}</span></div><div style="text-align:right"><strong style="font-size:1.1em;color:var(--g)">R$ ${s.preco?.toFixed(2)||'—'}</strong><br><a href="${s.link}" target="_blank" style="font-size:.7em;color:var(--b)">Abrir no ML ↗</a></div></div>`).join('')}
+        <button class="btn btn-sm" style="margin-top:8px;background:#ccc;color:#555" onclick="document.getElementById('mlModal')?.remove()">Fechar</button>
+      </div>
+    </div>`;
+  main.insertAdjacentHTML('beforeend', modalHTML);
+  TEIA.registrar('ml_scrape', { produto, total: d.paging?.total });
+}
+  const termo = document.getElementById('prospTermo').value.trim();
+  el.innerHTML = `<div class="alert alert-info">⚡ Pipeline disparado para "${termo}" — Discovery + Scanner + Sourcing via IA...</div>`;
 
 async function dispararPipelineCategoria() {
   const termo = document.getElementById('prospTermo').value.trim();
