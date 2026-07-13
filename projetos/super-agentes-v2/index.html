@@ -88,7 +88,22 @@ footer { text-align: center; padding: 20px; color: #aaa; font-size: .75em; }
 
 <main id="main"></main>
 
-<footer>Super Agentes v13 · Tema Pastel · Deploy Vercel</footer>
+<footer>Super Agentes v2 · Deploy Vercel · Auto-aprendizado</footer>
+
+<script type="module">
+import { TEIA } from '/public/teia.js';
+import { calcularCVFF, calcularMargem, calcularLandedCost } from '/public/calculos.js';
+import { DADOS_NICHOS, CATEGORIAS, gerarRanking } from '/public/prospect.js';
+
+// Expor no window para uso pelas funções existentes
+window.TEIA = TEIA;
+window.calcularCVFF = calcularCVFF;
+window.calcularMargem = calcularMargem;
+window.calcularLandedCost = calcularLandedCost;
+window.DADOS_NICHOS = DADOS_NICHOS;
+window.CATEGORIAS = CATEGORIAS;
+window.gerarRanking = gerarRanking;
+</script>
 
 <script>
 // ============================================================
