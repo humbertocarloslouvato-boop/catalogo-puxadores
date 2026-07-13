@@ -240,19 +240,29 @@ async function callAI(messages, maxTokens = 500) {
   const key = getKey();
   if (!key) throw new Error('Configure a chave API em ⚙️ IA');
   const pr = PROVIDERS[window.currentProvider];
-  const r = await fetch('/api/proxy', {
-    method: 'POST',
-    headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({
-      provider: window.currentProvider,
-      model: pr.model,
-      messages,
-      max_tokens: maxTokens,
-      api_key: key,
-    }),
-  });
-  if (!r.ok) { const d = await r.json().catch(()=>({})); throw new Error(d.error || 'HTTP ' + r.status); }
-  return r.json();
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 25000); // 25s timeout
+  try {
+    const r = await fetch('/api/proxy', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        provider: window.currentProvider,
+        model: pr.model,
+        messages,
+        max_tokens: maxTokens,
+        api_key: key,
+      }),
+      signal: controller.signal,
+    });
+    clearTimeout(timeout);
+    if (!r.ok) { const d = await r.json().catch(()=>({})); throw new Error(d.error || 'HTTP ' + r.status); }
+    return r.json();
+  } catch(e) {
+    clearTimeout(timeout);
+    if (e.name === 'AbortError') throw new Error('⏱️ Timeout — a IA demorou mais de 25s');
+    throw e;
+  }
 }
 
 // ============================================================
@@ -337,10 +347,13 @@ function overview() {
     <div class="card">
       <h2>📊 Métricas do Sistema</h2>
       <div class="result-row"><span>Skills registradas</span><span>30</span></div>
-      <div class="result-row"><span>Scripts Python</span><span>29</span></div>
-      <div class="result-row"><span>Cron jobs ativos</span><span>18</span></div>
-      <div class="result-row"><span>Plataformas globais</span><span>24</span></div>
+      <div class="result-row"><span>Scripts Python</span><span>6</span></div>
+      <div class="result-row"><span>Nichos no ranking</span><span>${(TEIA.dados.ranking||[]).length || 0}</span></div>
+      <div class="result-row"><span>Prospecções IA</span><span>${TEIA.pulse.prospeccoes}</span></div>
+      <div class="result-row"><span>Pipeline execuções</span><span>${TEIA.log.filter(l=>l.acao==='pipeline_execucao').length}</span></div>
       <div class="result-row"><span>Provedores IA</span><span>${Object.keys(PROVIDERS).length}</span></div>
+      <div class="result-row"><span>Plataformas CN</span><span>8</span></div>
+      <div class="result-row"><span>Deploy</span><span>Vercel 12s</span></div>
     </div>
   `;
 }
@@ -700,7 +713,7 @@ function gerarRanking(nichos, catNome) {
     const isData = r.recomendacao === 'insufficient_data';
     const badge = isData ? 'badge-nogo' : r.score >= 85 ? 'badge-go' : r.score >= 70 ? 'badge-cond' : 'badge-nogo';
     const verdict = isData ? 'DADOS' : r.score >= 85 ? 'TOP' : r.score >= 70 ? 'GO' : 'COND';
-    const nFornecedores = isData ? 0 : Math.floor(Math.random()*3)+2;
+    const nFornecedores = r.supplierCount || (isData ? 0 : Math.min(5, Math.max(1, Math.round(r.score / 20))));
     const truthEmoji = { unavailable:'🔴', estimated:'🟡', source_observed:'🟢', cross_checked:'✅', quote_confirmed:'🏆', outcome_confirmed:'⭐' };
     const truthIcon = truthEmoji[r.truth] || '🟡';
 
@@ -938,11 +951,15 @@ function forn() {
   `;
 }
 
+let filterTimeout;
 function filtrarFornecedores() {
-  const q = (document.getElementById('fornSearch')?.value || '').toLowerCase();
-  document.querySelectorAll('.forn-item').forEach(el => {
-    el.style.display = (el.dataset.name || '').includes(q) ? '' : 'none';
-  });
+  clearTimeout(filterTimeout);
+  filterTimeout = setTimeout(() => {
+    const q = (document.getElementById('fornSearch')?.value || '').toLowerCase();
+    document.querySelectorAll('.forn-item').forEach(el => {
+      el.style.display = (el.dataset.name || '').includes(q) ? '' : 'none';
+    });
+  }, 150);
 }
 
 function copiarContato(email, whatsapp) {
@@ -981,7 +998,7 @@ function gerarCotacao(name, email, produto, ncm, fob, moq) {
 
 function fecharModal() { const m = document.getElementById('rfqModal'); if(m) m.remove(); }
 
-function enviarEmail(email, produto, ncm, name, fob) {
+function enviarEmail(email, produto, name) {
   const nome = document.getElementById('rfqNome')?.value || '[SEU NOME]';
   const empresa = document.getElementById('rfqEmpresa')?.value || '[SUA EMPRESA]';
   const cnpj = document.getElementById('rfqCnpj')?.value || '';
@@ -998,7 +1015,7 @@ function enviarEmail(email, produto, ncm, name, fob) {
   fecharModal();
 }
 
-function copiarTemplate(name, produto, ncm, fob, moq) {
+function copiarTemplate(name, produto, moq) {
   const nome = document.getElementById('rfqNome')?.value || '[SEU NOME]';
   const empresa = document.getElementById('rfqEmpresa')?.value || '[SUA EMPRESA]';
   const cnpj = document.getElementById('rfqCnpj')?.value || '';
@@ -1149,6 +1166,12 @@ function pipeline() {
 
 async function executarPipeline(categoria) {
   const el = document.getElementById('pipelineStatus');
+  if (el.dataset.running === 'true') { showToast('⚠️ Pipeline já está rodando'); return; }
+  el.dataset.running = 'true';
+  
+  const btns = document.querySelectorAll('#main button');
+  btns.forEach(b => { if (b.textContent.includes('Todas') || b.textContent.includes('▶️')) b.disabled = true; });
+  
   const inicio = Date.now();
   const cats = categoria==='todas'?['pet','casa','fitness','baby','eletronicos']:[categoria];
   const CATEGORIAS_NOMES = { pet:'Pet', casa:'Casa', fitness:'Fitness', baby:'Baby', eletronicos:'Eletrônicos' };
@@ -1194,6 +1217,8 @@ async function executarPipeline(categoria) {
   }
 
   const total=((Date.now()-inicio)/1000).toFixed(0);
+  el.dataset.running = 'false';
+  btns.forEach(b => b.disabled = false);
   el.innerHTML+=`<div class="alert alert-info" style="margin-top:8px">✅ Pipeline concluído — ${novosResultados.length} nichos descobertos · <button class="btn btn-sm" onclick="refreshTab('prosp')">📊 Ver Ranking</button></div>`;
   showToast(`✅ ${novosResultados.length} nichos descobertos — vá em 🔍 Prospecção`);
 }
