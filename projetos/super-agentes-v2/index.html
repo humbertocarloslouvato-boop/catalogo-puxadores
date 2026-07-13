@@ -262,7 +262,10 @@ const TAB_CACHE = {};        // cache visual por aba — persiste consultas
 let currentTab = 'overview'; // aba ativa
 
 function switchTab(tab, btn) {
-  // Salvar HTML da aba atual no cache ANTES de sair
+  // Fechar modais abertos antes de salvar cache
+  document.querySelectorAll('.modal-overlay').forEach(m => m.remove());
+
+  // Salvar HTML da aba atual no cache ANTES de sair (sem modais)
   const main = document.getElementById('main');
   if (currentTab && main.innerHTML) {
     TAB_CACHE[currentTab] = main.innerHTML;
