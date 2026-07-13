@@ -258,12 +258,39 @@ async function callAI(messages, maxTokens = 500) {
 // ============================================================
 // NAVEGAÇÃO
 // ============================================================
+const TAB_CACHE = {};        // cache visual por aba — persiste consultas
+let currentTab = 'overview'; // aba ativa
+
 function switchTab(tab, btn) {
+  // Salvar HTML da aba atual no cache ANTES de sair
+  const main = document.getElementById('main');
+  if (currentTab && main.innerHTML) {
+    TAB_CACHE[currentTab] = main.innerHTML;
+  }
+
   document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
-  const m = document.getElementById('main');
+
+  // Se já tem cache desta aba, restaura em vez de regenerar
+  if (TAB_CACHE[tab]) {
+    main.innerHTML = TAB_CACHE[tab];
+    currentTab = tab;
+    return;
+  }
+
   const tabs = { overview, calc, prosp, copilot, forn, intel, pipeline, ia, saas };
-  try { (tabs[tab] || overview)(); } catch(e) { m.innerHTML = `<div class="card"><h2>⚠️ Erro</h2><p>${e.message}</p></div>`; }
+  try {
+    (tabs[tab] || overview)();
+    currentTab = tab;
+  } catch(e) {
+    main.innerHTML = `<div class="card"><h2>⚠️ Erro</h2><p>${e.message}</p></div>`;
+  }
+}
+
+// Força regeneração de uma aba (quando dados mudam via pipeline)
+function refreshTab(tab) {
+  delete TAB_CACHE[tab];
+  if (currentTab === tab) switchTab(tab);
 }
 
 // ============================================================
@@ -1158,7 +1185,7 @@ async function executarPipeline(categoria) {
   }
 
   const total=((Date.now()-inicio)/1000).toFixed(0);
-  el.innerHTML+=`<div class="alert alert-info" style="margin-top:8px">✅ Pipeline concluído — ${novosResultados.length} nichos descobertos · <button class="btn btn-sm" onclick="switchTab('prosp')">📊 Ver Ranking</button></div>`;
+  el.innerHTML+=`<div class="alert alert-info" style="margin-top:8px">✅ Pipeline concluído — ${novosResultados.length} nichos descobertos · <button class="btn btn-sm" onclick="refreshTab('prosp')">📊 Ver Ranking</button></div>`;
   showToast(`✅ ${novosResultados.length} nichos descobertos — vá em 🔍 Prospecção`);
 }
 function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
