@@ -1237,13 +1237,45 @@ async function escanearMarketplace() {
   const nicho = document.getElementById('intelNicho').value.trim();
   if (!nicho) { showToast('⚠️ Digite um nicho'); return; }
   const el = document.getElementById('intelScanResult');
-  el.innerHTML = `<div class="alert alert-info">🔍 Escaneando "${nicho}" nos marketplaces BR...</div>`;
+  const key = getKey();
+  if (!key) { el.innerHTML = `<div class="alert alert-err">❌ Configure a chave API em ⚙️ IA</div>`; return; }
+  el.innerHTML = `<div class="alert alert-info">🔍 Análise completa de "${nicho}" nos marketplaces BR (ML/Shopee/Amazon/Magalu/TikTok)...</div>`;
   try {
-    const r = await callAI([{role:'user',content:`Analise o nicho "${nicho}" nos marketplaces brasileiros (ML, Shopee, Amazon). Retorne JSON: niche, totalSellers, priceRange{min,max,median}, topProducts[{nome,preco}], gaps[], recommendation(GO/COND/NO-GO).`}],600);
-    const d=JSON.parse(r.content); const badge=d.recommendation==='GO'?'badge-go': d.recommendation==='COND'?'badge-cond':'badge-nogo';
-    el.innerHTML=`<div class="result-row"><span>Nicho</span><span><strong>${d.niche||nicho}</strong></span></div><div class="result-row"><span>Vendedores</span><span>${d.totalSellers||'--'}</span></div><div class="result-row"><span>Preço</span><span>R$${d.priceRange?.min||'--'}–R$${d.priceRange?.max||'--'} (med R$${d.priceRange?.median||'--'})</span></div><div class="result-row"><span>Recomendação</span><span class="${badge}">${d.recommendation||'--'}</span></div>${(d.gaps||[]).map(g=>`<div class="alert alert-info">💡 ${g}</div>`).join('')}`;
-    TEIA.registrar('intel_scanner',{termo:nicho,...d});
-  } catch(e) { el.innerHTML=`<div class="alert alert-err">❌ ${e.message}</div>`; }
+    const r = await fetch('/api/market-analysis', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ product: nicho, api_key: key })
+    });
+    if (!r.ok) throw new Error((await r.json().catch(()=>({}))).error || 'HTTP ' + r.status);
+    const { analysis: a } = await r.json();
+
+    const badge = a.veredito?.tipo === 'GO' ? 'badge-go' : a.veredito?.tipo === 'COND' ? 'badge-cond' : 'badge-nogo';
+    const dp = a.distribuicaoPrecos || {};
+
+    el.innerHTML = `
+      <div style="margin-bottom:12px">
+        <strong>📊 Análise de Mercado: ${nicho}</strong>
+        <span class="${badge}" style="margin-left:8px">${a.veredito?.tipo || '—'}</span>
+      </div>
+      <div class="result-row"><span>📈 Distribuição de Preços</span><span></span></div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px">
+        <div style="background:var(--bg);padding:8px;border-radius:6px;text-align:center"><div style="font-size:.7em;color:#888">P25</div><div style="font-weight:700">R$${dp.p25 || '—'}</div></div>
+        <div style="background:var(--bg);padding:8px;border-radius:6px;text-align:center"><div style="font-size:.7em;color:#888">P50</div><div style="font-weight:700">R$${dp.p50 || '—'}</div></div>
+        <div style="background:var(--bg);padding:8px;border-radius:6px;text-align:center"><div style="font-size:.7em;color:#888">P75</div><div style="font-weight:700">R$${dp.p75 || '—'}</div></div>
+        <div style="background:var(--bg);padding:8px;border-radius:6px;text-align:center"><div style="font-size:.7em;color:#888">P90</div><div style="font-weight:700">R$${dp.p90 || '—'}</div></div>
+      </div>
+      <div class="result-row"><span>🎯 Veredito</span><span class="${badge}">Preço-alvo: R$${a.veredito?.precoAlvo || '—'}</span></div>
+      <p style="font-size:.78em;color:#666;margin:6px 0 12px;line-height:1.4">${a.veredito?.estrategia || ''}</p>
+      ${(a.topVendedores||[]).length ? `<strong>🏆 Top Vendedores</strong><div style="margin-top:6px">${a.topVendedores.map(v => `<div class="result-row"><span>${v.nome} (${v.marketplace})</span><span><strong>${v.vendasMes} vendas/mês</strong></span></div>`).join('')}</div>` : ''}
+      ${(a.reclamacoes||[]).length ? `<div style="margin-top:12px"><strong>😤 Reclamações Recorrentes (oportunidades)</strong>${a.reclamacoes.map(r => `<div style="font-size:.78em;color:#c44;padding:4px 0;border-bottom:1px solid #eee">• ${r}</div>`).join('')}</div>` : ''}
+      ${(a.tendencias||[]).length ? `<div style="margin-top:12px"><strong>📈 Tendências Emergentes</strong>${a.tendencias.map(t => `<div style="font-size:.78em;color:var(--g);padding:4px 0;border-bottom:1px solid #eee">• ${t}</div>`).join('')}</div>` : ''}
+      ${(a.gaps||[]).length ? `<div style="margin-top:12px"><strong>🕳️ Gaps de Catálogo</strong>${a.gaps.map(g => `<div style="font-size:.78em;color:var(--b);padding:4px 0;border-bottom:1px solid #eee">• ${g}</div>`).join('')}</div>` : ''}
+      ${a.scoreNicho ? `<div class="result-row" style="margin-top:10px"><span>Score do Nicho</span><span class="badge-go" style="font-weight:700">${a.scoreNicho}/100</span></div>` : ''}
+    `;
+    TEIA.registrar('intel_scanner', { termo: nicho, score: a.scoreNicho, tipo: a.veredito?.tipo });
+  } catch (e) {
+    el.innerHTML = `<div class="alert alert-err">❌ ${e.message}</div>`;
+  }
 }
 
 async function sourcingChina() {
