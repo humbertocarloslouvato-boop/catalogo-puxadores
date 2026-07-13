@@ -65,14 +65,17 @@ Para cada nicho informe:
 - nome: nome curto do produto
 - ncm: NCM Brasil (formato 0000.00.00)
 - fob: preço FOB USD (preço de FÁBRICA no 1688 com MOQ 300+, tipicamente 30-50% do varejo)
-- landed: custo landed estimado BRL (fob × 5.2 × fator impostos ~1.7-1.9)
+- landed: custo landed estimado BRL
 - preco: preço venda sugerido BRL
 - concorrencia: descrição resumida
 - score: 0-100
 - recomendacao: GO/COND/NO-GO
-- regulacao: certificação necessária (INMETRO/ANVISA/ANATEL/MAPA/nenhuma)
+- regulacao: certificação necessária
 - volume_m3: volume unitário estimado
 - decisao_modal: recomendação de frete (COURIER/LCL/FCL)
+- topSellers: array de 3-5 vendedores REAIS com {nome, marketplace (ML/Shopee/Amazon), vendasMes (número estimado de vendas/mês), precoPraticado (R$), avaliacoes (número), estrelas (1-5)}
+- totalSellers: número total de vendedores estimado no nicho
+- marketplaces: array de marketplaces onde o produto é vendido (ex: ["ML","Shopee"])
 
 Retorne APENAS JSON: {"nichos":[{...}]}`;
 
@@ -130,6 +133,10 @@ Retorne APENAS JSON: {"nichos":[{...}]}`;
         modal: n.decisao_modal || 'LCL',
         categoria: category,
         ts: Date.now(),
+        // Marketplace intelligence
+        topSellers: n.topSellers || [],
+        totalSellers: n.totalSellers || 0,
+        marketplaces: n.marketplaces || ['ML','Shopee'],
         // Truth Engine fields (ProspecçãoPro-inspired)
         truth,
         truthLabel: truthLabels[truth],

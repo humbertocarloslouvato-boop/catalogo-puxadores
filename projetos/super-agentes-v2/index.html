@@ -737,6 +737,7 @@ function gerarRanking(nichos, catNome) {
             onclick="abrirFornecedoresModal('${r.nome}')">🏭 Fornecedores (${nFornecedores})</button>
           <button class="btn btn-sm" style="font-size:.68em;padding:4px 6px" 
             onclick="verRelatorio('${r.nome}','${r.ncm}',${r.fob},${r.landed},${r.preco},${r.margem},${r.score},'${verdict}')">📊 Relatório</button>
+          ${r.totalSellers ? `<span style="font-size:.65em;color:#888">👥 ${r.totalSellers} vendedores · ${(r.marketplaces||[]).join(' ')}</span>` : ''}
         </div>
       </td>
     </tr>`;
@@ -827,7 +828,12 @@ function verRelatorio(nome, ncm, fob, landed, preco, margem, score, verdict) {
           <div class="result-row" style="font-weight:700;font-size:1.1em"><span>Margem líquida real</span><span style="color:${margemReal>20?'var(--g)': margemReal>0?'var(--y)':'var(--r)'}">${margemReal}%</span></div>
           <div class="result-row"><span>Lucro por unidade</span><span>R$ ${lucro.toFixed(2)}</span></div>
           <div class="result-row"><span>Câmbio ref</span><span>R$ ${ptax.toFixed(2)}/USD</span></div>
+          ${item.totalSellers ? `<div class="result-row"><span>👥 Vendedores no nicho</span><span>${item.totalSellers} · ${(item.marketplaces||[]).join(', ')}</span></div>` : ''}
         </div>
+        ${(item.topSellers||[]).length ? `
+        <div style="margin-top:12px"><strong>🏆 Top Vendedores:</strong>
+        ${item.topSellers.map(s=>`<div class="result-row" style="font-size:.78em"><span>${s.nome} (${s.marketplace})</span><span>⭐${s.estrelas||'—'} · ~${s.vendasMes||'?'} vendas/mês · R$${s.precoPraticado||'—'}</span></div>`).join('')}
+        </div>` : ''}
         <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
           <button class="btn btn-sm" style="background:var(--y)" onclick="document.getElementById('relModal')?.remove();abrirFornecedoresModal('${nome}')">🏭 Buscar Fornecedores</button>
           <button class="btn btn-sm" style="background:var(--b)" onclick="document.getElementById('relModal')?.remove();document.getElementById('prospTermo').value='${nome}';switchTab('calc')">🧮 Calcular CVFF</button>
