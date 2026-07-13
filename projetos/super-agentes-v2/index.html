@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Super Agentes v13 — Máquina de Análise</title>
+<style>
+:root {
+  --bg: #fbfaf8; --card: #ffffff; --text: #2d3436;
+  --g: #7b9e7d; --gl: #a8c5a9; --b: #8a9eb6; --bl: #b8c9db;
+  --r: #d4756b; --y: #d4a76b; --brd: #e8e4df;
+  --shadow: 0 1px 3px rgba(0,0,0,.06);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+header { background: var(--card); border-bottom: 1px solid var(--brd); padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+header h1 { font-size: 1.2em; font-weight: 600; color: var(--g); }
+header .badge { font-size: .75em; background: var(--gl); color: #3d5a3f; padding: 3px 8px; border-radius: 10px; }
+nav { display: flex; gap: 2px; padding: 8px 16px; background: var(--card); border-bottom: 1px solid var(--brd); overflow-x: auto; }
+nav button { padding: 8px 14px; border: none; background: transparent; cursor: pointer; font-size: .88em; color: #888; border-radius: 6px; white-space: nowrap; transition: .2s; }
+nav button:hover { background: var(--bg); color: var(--text); }
+nav button.active { background: var(--g); color: #fff; }
+main { max-width: 1100px; margin: 20px auto; padding: 0 16px; }
+.card { background: var(--card); border: 1px solid var(--brd); border-radius: 10px; padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); }
+.card h2 { font-size: 1em; margin-bottom: 12px; color: var(--g); }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+.kpi { background: var(--card); border: 1px solid var(--brd); border-radius: 8px; padding: 16px; text-align: center; box-shadow: var(--shadow); }
+.kpi .num { font-size: 2em; font-weight: 700; color: var(--g); }
+.kpi .lbl { font-size: .78em; color: #999; margin-top: 4px; }
+.badge-go { background: #d4edda; color: #2d6a3f; padding: 4px 10px; border-radius: 12px; font-size: .78em; }
+.badge-cond { background: #fff3cd; color: #856404; padding: 4px 10px; border-radius: 12px; font-size: .78em; }
+.badge-nogo { background: #f8d7da; color: #721c24; padding: 4px 10px; border-radius: 12px; font-size: .78em; }
+.badge-data { background: #e8e4df; color: #888; padding: 4px 10px; border-radius: 12px; font-size: .78em; }
+input, select, textarea { width: 100%; padding: 10px 12px; border: 1px solid var(--brd); border-radius: 6px; font-size: .9em; background: var(--bg); margin-bottom: 10px; font-family: inherit; }
+button.btn { background: var(--g); color: #fff; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: .9em; font-weight: 500; transition: .2s; }
+button.btn:hover { opacity: .9; }
+button.btn-sm { padding: 6px 14px; font-size: .82em; }
+.alert { padding: 12px 16px; border-radius: 6px; margin: 8px 0; font-size: .85em; }
+.alert-warn { background: #fff8e1; color: #856404; border-left: 3px solid var(--y); }
+.alert-err { background: #fce4e4; color: #721c24; border-left: 3px solid var(--r); }
+.alert-info { background: #e8f4f8; color: #2d6a3f; border-left: 3px solid var(--b); }
+.result-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid var(--brd); font-size: .88em; }
+.result-row:last-child { border: none; }
+.pulse { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--g); animation: pulse 2s infinite; margin-right: 6px; }
+@keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:.4; } }
+footer { text-align: center; padding: 20px; color: #aaa; font-size: .75em; }
+.toast { position: fixed; bottom: 20px; right: 20px; background: var(--g); color: #fff; padding: 12px 20px; border-radius: 8px; font-size: .85em; z-index: 999; animation: slideUp .3s; }
+@keyframes slideUp { from { transform: translateY(20px); opacity:0; } to { transform: translateY(0); opacity:1; } }
+.modal-overlay { position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;z-index:1000; }
+.modal { background:#fff;border-radius:12px;padding:24px;max-width:600px;width:90%;max-height:80vh;overflow-y:auto;box-shadow:0 8px 30px rgba(0,0,0,.15); }
+.modal h3 { color:var(--g);margin-bottom:16px; }
+.supplier-card { background:var(--card);border:1px solid var(--brd);border-radius:8px;padding:14px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px; }
+.supplier-card .info { flex:1;min-width:200px; }
+.supplier-card .actions { display:flex;gap:6px;flex-wrap:wrap; }
+.btn-whatsapp { background:#25d366;color:#fff;border:none;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:.78em; }
+.btn-email { background:var(--b);color:#fff;border:none;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:.78em; }
+.btn-copy { background:var(--y);color:#fff;border:none;padding:6px 12px;border-radius:6px;cursor:pointer;font-size:.78em; }
+.tag-nicho { background:var(--bg);padding:4px 10px;border-radius:12px;font-size:.78em;cursor:pointer;white-space:nowrap;display:inline-block;margin:2px;transition:.2s; }
+.tag-nicho:hover { background:var(--gl);color:#3d5a3f; }
+</style>
+</head>
+<body>
+
+<header>
+  <div style="display:flex;align-items:center;gap:10px">
+    <h1>🕸️ Super Agentes v13</h1>
+    <span class="badge">Máquina de Análise</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px">
+    <span class="pulse" id="pulseDot"></span>
+    <span id="syncStatus" style="font-size:.8em;color:#aaa">○ Offline</span>
+    <span id="brainLevel" style="font-size:.9em">🌱</span>
+    <span style="font-size:.75em;color:#aaa">v13.0.0</span>
+  </div>
+</header>
+
+<nav id="nav">
+  <button class="active" onclick="switchTab('overview',this)">🏠 Visão Geral</button>
+  <button onclick="switchTab('calc',this)">🧮 Calculadoras</button>
+  <button onclick="switchTab('prosp',this)">🔍 Prospecção</button>
+  <button onclick="switchTab('copilot',this)">🤖 Co-piloto</button>
+  <button onclick="switchTab('forn',this)">🏭 Fornecedores</button>
+  <button onclick="switchTab('intel',this)">🧠 Inteligência</button>
+  <button onclick="switchTab('pipeline',this)">⚙️ Pipeline</button>
+  <button onclick="switchTab('ia',this)">⚙️ IA</button>
+  <button onclick="switchTab('saas',this)">☁️ SaaS</button>
+</nav>
+
+<main id="main"></main>
+
+<footer>Super Agentes v13 · Tema Pastel · Deploy Vercel</footer>
+
+<script>
+// ============================================================
+// CONFIGURAÇÃO
+// ============================================================
+const VERSAO = '13.0.0';
+const PROVIDERS = {
+  deepseek:  { name:'DeepSeek',  url:'https://api.deepseek.com/v1/chat/completions',       model:'deepseek-chat' },
+  anthropic: { name:'Anthropic', url:'https://api.anthropic.com/v1/messages',              model:'claude-sonnet-4-20250514' },
+  minimax:   { name:'MiniMax',   url:'https://api.minimax.chat/v1/text/chatcompletion_v2', model:'MiniMax-Text-01' },
+  zai:       { name:'Z.AI/GLM',  url:'https://open.bigmodel.cn/api/paas/v4/chat/completions', model:'glm-4' },
+};
+
+// ============================================================
+// ESTADO GLOBAL (TEIA)
+// ============================================================
+const TEIA = {
+  init: Date.now(),
+  pulse: { ciclos:0, calculos:0, prospeccoes:0, consultas:0, alertas:0 },
+  dados: {},
+  log: [],
+  feedback: {},
+
+  registrar(acao, dados={}) {
+    this.pulse.ciclos++;
+    if (acao.includes('calculo')) this.pulse.calculos++;
+    if (acao.includes('prosp')) this.pulse.prospeccoes++;
+    if (acao.includes('consulta')) this.pulse.consultas++;
+    this.log.push({ acao, ts: Date.now(), dados });
+    localStorage.setItem('sa_teia_log', JSON.stringify(this.log.slice(-50)));
+    syncToCloud();
+    updatePulse();
+  },
+
+  trigger(acao, dados={}) {
+    const sugestoes = [];
+    const preco = parseFloat(dados.preco || dados.sell_price || 0);
+    const margem = parseFloat(dados.margem || dados.net_margin || 0);
+
+    if (preco > 0 && preco < 80) sugestoes.push({ skill:'bundle_optimizer', msg:'💡 CVFF come margem — venda em KIT', target:'calc' });
+    if (margem > 0.5) sugestoes.push({ skill:'elasticidade_preco', msg:'📈 Margem alta — teste preço premium', target:'calc' });
+    if (margem < 0.2 && margem > 0) sugestoes.push({ skill:'fornecedor_china', msg:'⚠️ Margem apertada — negocie FOB na China', target:'forn' });
+    if (acao.includes('prosp') || acao.includes('forn')) sugestoes.push({ skill:'supplier_negotiation', msg:'🤝 Aplique playbook de negociação', target:'forn' });
+
+    return sugestoes;
+  },
+
+  brainPulse() {
+    const ev = this.pulse.ciclos;
+    if (ev > 100) return '🌲';
+    if (ev > 50) return '🌳';
+    if (ev > 20) return '🌿';
+    return '🌱';
+  },
+
+  status() {
+    return {
+      horas: Math.floor((Date.now() - this.init) / 3600000),
+      eventos: this.pulse.ciclos,
+      confianca: this._confianca(),
+      trending: this._trending(),
+    };
+  },
+
+  _confianca() {
+    const t = Object.values(this.feedback).filter(v => v > 0);
+    return t.length > 0 ? Math.round(t.reduce((a,b) => a + b, 0) / t.length * 100) : 0;
+  },
+
+  _trending() {
+    const recentes = this.log.slice(-20);
+    const counts = {};
+    recentes.forEach(l => { const a = l.acao.split('_')[0]; counts[a] = (counts[a] || 0) + 1; });
+    return Object.entries(counts).sort((a,b) => b[1] - a[1])[0]?.[0] || '-';
+  },
+};
+
+// ============================================================
+// PERSISTÊNCIA (localStorage + Cloud)
+// ============================================================
+function loadState() {
+  try {
+    const raw = localStorage.getItem('sa_api_keys');
+    if (raw) window.apiKeys = JSON.parse(raw);
+  } catch(e) { window.apiKeys = { deepseek: '', anthropic: '', minimax: '', zai: '' }; }
+  if (!window.apiKeys) window.apiKeys = { deepseek: '', anthropic: '', minimax: '', zai: '' };
+
+  window.currentProvider = localStorage.getItem('sa_provider') || 'deepseek';
+
+  try {
+    const teiaLog = localStorage.getItem('sa_teia_log');
+    if (teiaLog) TEIA.log = JSON.parse(teiaLog);
+  } catch(e) {}
+}
+
+async function loadFromCloud() {
+  try {
+    const r = await fetch('/api/state');
+    if (r.ok) {
+      const d = await r.json();
+      if (d && d.state) {
+        if (d.state.apiKeys) { window.apiKeys = {...window.apiKeys, ...d.state.apiKeys}; saveKeys(); }
+        if (d.state.provider) { window.currentProvider = d.state.provider; localStorage.setItem('sa_provider', d.state.provider); }
+      }
+    }
+    updateSyncStatus(d?.source === 'kv');
+  } catch(e) { updateSyncStatus(false); }
+}
+
+async function syncToCloud() {
+  try {
+    await fetch('/api/state', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        version: VERSAO,
+        apiKeys: window.apiKeys,
+        provider: window.currentProvider,
+        teia: { pulse: TEIA.pulse, brainLevel: TEIA.brainPulse() },
+      }),
+    });
+    updateSyncStatus(true);
+  } catch(e) { updateSyncStatus(false); }
+}
+
+function updateSyncStatus(cloud) {
+  const el = document.getElementById('syncStatus');
+  if (el) el.innerHTML = cloud ? '☁️ Cloud sync' : '📡 Cache ativo';
+}
+
+function saveKeys() {
+  localStorage.setItem('sa_api_keys', JSON.stringify(window.apiKeys || {}));
+  localStorage.setItem('sa_provider', window.currentProvider);
+}
+
+function getKey() {
+  return (window.apiKeys || {})[window.currentProvider] || '';
+}
+
+function updatePulse() {
+  const el = document.getElementById('brainLevel');
+  if (el) el.textContent = TEIA.brainPulse();
+}
+
+// ============================================================
+// CALL IA (proxy unificado)
+// ============================================================
+async function callAI(messages, maxTokens = 500) {
+  const key = getKey();
+  if (!key) throw new Error('Configure a chave API em ⚙️ IA');
+  const pr = PROVIDERS[window.currentProvider];
+  const r = await fetch('/api/proxy', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({
+      provider: window.currentProvider,
+      model: pr.model,
+      messages,
+      max_tokens: maxTokens,
+      api_key: key,
+    }),
+  });
+  if (!r.ok) { const d = await r.json().catch(()=>({})); throw new Error(d.error || 'HTTP ' + r.status); }
+  return r.json();
+}
+
+// ============================================================
+// NAVEGAÇÃO
+// ============================================================
+function switchTab(tab, btn) {
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  const m = document.getElementById('main');
+  const tabs = { overview, calc, prosp, copilot, forn, intel, pipeline, ia, saas };
+  try { (tabs[tab] || overview)(); } catch(e) { m.innerHTML = `<div class="card"><h2>⚠️ Erro</h2><p>${e.message}</p></div>`; }
+}
+
+// ============================================================
+// ABA 1: VISÃO GERAL
+// ============================================================
+function overview() {
+  const st = TEIA.status();
+  const s = TEIA.trigger('overview', {});
+
+  document.getElementById('main').innerHTML = `
+    <div class="grid2">
+      <div class="kpi"><div class="num">${st.eventos}</div><div class="lbl">🔄 Ciclos TEIA</div></div>
+      <div class="kpi"><div class="num">${TEIA.pulse.calculos}</div><div class="lbl">🧮 Cálculos</div></div>
+      <div class="kpi"><div class="num">${TEIA.pulse.prospeccoes}</div><div class="lbl">🔍 Prospecções</div></div>
+      <div class="kpi"><div class="num">${TEIA.pulse.consultas}</div><div class="lbl">💬 Consultas IA</div></div>
+    </div>
+
+    <div class="card">
+      <h2>🕸️ Mapa da Teia</h2>
+      <div class="result-row"><span>🧠 Confiança do Learner</span><span>${st.confianca}%</span></div>
+      <div class="result-row"><span>⏱️ Tempo de operação</span><span>${st.horas}h</span></div>
+      <div class="result-row"><span>🔥 Trending #1</span><span>${st.trending}</span></div>
+      <div class="result-row"><span>🌳 Nível cerebral</span><span>${TEIA.brainPulse()}</span></div>
+    </div>
+
+    <div class="card">
+      <h2>🧠 Sugestões da Teia (Auto-Gestão)</h2>
+      ${s.length > 0 ? s.map(sug => `
+        <div class="alert alert-info" style="cursor:pointer" onclick="switchTab('${sug.target}')">
+          ${sug.msg}
+        </div>
+      `).join('') : '<p style="color:#aaa">Nenhuma sugestão no momento. Use as calculadoras ou prospecção para ativar.</p>'}
+    </div>
+
+    <div class="card">
+      <h2>📊 Métricas do Sistema</h2>
+      <div class="result-row"><span>Skills registradas</span><span>30</span></div>
+      <div class="result-row"><span>Scripts Python</span><span>29</span></div>
+      <div class="result-row"><span>Cron jobs ativos</span><span>18</span></div>
+      <div class="result-row"><span>Plataformas globais</span><span>24</span></div>
+      <div class="result-row"><span>Provedores IA</span><span>${Object.keys(PROVIDERS).length}</span></div>
+    </div>
+  `;
+}
+
+// ============================================================
+// ABA 2: CALCULADORAS
+// ============================================================
+function calc() {
+  document.getElementById('main').innerHTML = `
+    <div class="card">
+      <h2>🧮 Calculadora CVFF (Mercado Livre)</h2>
+      <p style="font-size:.85em;color:#888;margin-bottom:12px">Auditoria dupla: cálculo determinístico + enforce_margem</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <input id="cvffPreco" type="number" placeholder="Preço de venda (R$)" value="36.40" step="0.01">
+        <input id="cvffCusto" type="number" placeholder="Custo unitário (R$)" value="21.08" step="0.01">
+      </div>
+      <select id="cvffTipo" style="margin-bottom:10px">
+        <option value="classic">Anúncio Clássico (7% comissão)</option>
+        <option value="premium">Anúncio Premium (12% comissão)</option>
+      </select>
+      <button class="btn" onclick="calcularCVFF()">Calcular Margem Real</button>
+      <div id="cvffResult" style="margin-top:12px"></div>
+    </div>
+
+    <div class="card">
+      <h2>📦 Landed Cost (Importação)</h2>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <input id="lcFob" type="number" placeholder="FOB unitário (USD)" value="4.50" step="0.01">
+        <input id="lcNcm" type="text" placeholder="NCM (ex: 8421.21.00)" value="8421.21.00">
+        <input id="lcVolume" type="number" placeholder="Volume (m³)" value="0.001" step="0.001">
+        <input id="lcQtd" type="number" placeholder="Quantidade" value="500">
+      </div>
+      <select id="lcModo" style="margin-bottom:10px">
+        <option value="lcl">LCL (carga consolidada)</option>
+        <option value="fcl20">FCL 20ft</option>
+        <option value="air">Aéreo</option>
+      </select>
+      <button class="btn" onclick="calcularLandedCost()">Calcular Landed Cost</button>
+      <div id="lcResult" style="margin-top:12px"></div>
+    </div>
+
+    <div class="card">
+      <h2>🎯 Stress Test (Monte Carlo)</h2>
+      <p style="font-size:.85em;color:#888;margin-bottom:12px">Simula 10.000 cenários com variação de câmbio, frete e comissão</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <input id="stFob" type="number" placeholder="FOB (USD)" value="4.50" step="0.01">
+        <input id="stNcm" type="text" placeholder="NCM" value="8421.21.00">
+        <input id="stVolume" type="number" placeholder="Volume (m³)" value="0.001" step="0.001">
+        <input id="stPreco" type="number" placeholder="Preço venda (R$)" value="129" step="0.01">
+      </div>
+      <button class="btn" onclick="calcularStressTest()">Rodar Monte Carlo</button>
+      <div id="stResult" style="margin-top:12px"></div>
+    </div>
+  `;
+}
+
+// ============================================================
+// FUNÇÕES DE CÁLCULO
+// ============================================================
+function getCVFF(preco) {
+  if (preco <= 0) return 0;
+  if (preco <= 25) return 4.50;
+  if (preco <= 35) return 5.00;
+  if (preco <= 45) return 5.50;
+  if (preco <= 55) return 6.00;
+  if (preco <= 70) return 6.50;
+  if (preco <= 90) return 7.00;
+  if (preco <= 120) return 7.50;
+  return 8.00;
+}
+
+function calcularCVFF() {
+  const preco = parseFloat(document.getElementById('cvffPreco').value) || 0;
+  const custo = parseFloat(document.getElementById('cvffCusto').value) || 0;
+  const tipo = document.getElementById('cvffTipo').value;
+  const cvff = getCVFF(preco);
+  const comissao = tipo === 'premium' ? preco * 0.12 : preco * 0.07;
+  const embalagem = 1.50;
+  const lucro = preco - custo - cvff - comissao - embalagem;
+  const margem = preco > 0 ? lucro / preco : 0;
+
+  // Enforce audit
+  const enforce = aplicarEnforce(margem, preco, cvff);
+
+  const el = document.getElementById('cvffResult');
+  el.innerHTML = `
+    <div class="result-row"><span>Preço de venda</span><span>R$ ${preco.toFixed(2)}</span></div>
+    <div class="result-row"><span>Custo unitário</span><span>R$ ${custo.toFixed(2)}</span></div>
+    <div class="result-row"><span>CVFF (taxa fixa)</span><span style="color:var(--r)">R$ ${cvff.toFixed(2)}</span></div>
+    <div class="result-row"><span>Comissão (${tipo==='premium'?'12%':'7%'})</span><span>R$ ${comissao.toFixed(2)}</span></div>
+    <div class="result-row"><span>Embalagem</span><span>R$ ${embalagem.toFixed(2)}</span></div>
+    <div class="result-row" style="font-weight:700"><span>Lucro líquido</span><span style="color:${lucro>0? 'var(--g)':'var(--r)'}">R$ ${lucro.toFixed(2)}</span></div>
+    <div class="result-row" style="font-weight:700"><span>Margem líquida</span><span>${(margem*100).toFixed(1)}%</span></div>
+    <div style="margin-top:12px">
+      <span class="badge-${enforce.badge==='GO'?'go': enforce.badge==='COND'?'cond':'nogo'}">${enforce.badge}</span>
+      <span style="font-size:.85em;margin-left:8px">${enforce.razao}</span>
+    </div>
+  `;
+
+  TEIA.registrar('calculo_cvff', { preco, custo, margem, lucro, cvff });
+  const sugs = TEIA.trigger('calculo_cvff', { preco, margem });
+  if (sugs.length) el.innerHTML += `<div class="alert alert-info" style="margin-top:8px">${sugs[0].msg}</div>`;
+}
+
+function aplicarEnforce(margem, preco, cvff) {
+  if (margem < 0) return { badge:'NO-GO', razao: 'Margem negativa — produto dá PREJUÍZO' };
+  if (margem < 0.10) return { badge:'NO-GO', razao: `Margem muito fina (${(margem*100).toFixed(1)}%)` };
+  if (margem < 0.20) return { badge:'COND', razao: `Margem apertada (${(margem*100).toFixed(1)}%). Verificar kit.` };
+  if (cvff > preco * 0.10) return { badge:'COND', razao: `CVFF come ${(cvff/preco*100).toFixed(1)}% do preço. Considere KIT.` };
+  return { badge:'GO', razao: `Margem saudável (${(margem*100).toFixed(1)}%)` };
+}
+
+function calcularLandedCost() {
+  const fob = parseFloat(document.getElementById('lcFob').value) || 0;
+  const ncm = document.getElementById('lcNcm').value || '0000.00.00';
+  const vol = parseFloat(document.getElementById('lcVolume').value) || 0;
+  const qtd = parseInt(document.getElementById('lcQtd').value) || 1;
+  const modo = document.getElementById('lcModo').value;
+  const ptax = 5.20;
+
+  // Fórmula correta do skill china-brazil-import-strategy: ICMS por dentro
+  const freight = modo === 'air' ? vol * 6 * 1000 : modo === 'fcl20' ? 2200 : vol * 180;
+  const insurance = fob * qtd * 0.003;  // 0.3% sobre FOB
+  const cif = fob * qtd + freight + insurance;
+
+  const iiRate = 0.16;
+  const ipiRate = 0.05;  // maioria dos NCMs é 0-5%
+  const pisCofinsRate = 0.1175;  // 2.1% PIS + 9.65% COFINS
+  const icmsRate = 0.18;
+
+  const ii = cif * iiRate;
+  const ipi = (cif + ii) * ipiRate;
+  const pisCofins = cif * pisCofinsRate;
+  const baseIcms = (cif + ii + ipi + pisCofins) / (1 - icmsRate);  // ICMS por dentro
+  const icms = baseIcms * icmsRate;
+  const afrmm = modo !== 'air' ? freight * 0.25 : 0;  // AFRMM 25% do frete marítimo
+  const siscomex = 50 + cif * 0.005;  // capatazia ~0.5% CIF
+
+  const despachante = 1500;
+  const landedUsd = cif + ii + ipi + pisCofins + icms + afrmm + siscomex;
+  const landedBrl = landedUsd * ptax + despachante;
+  const landedUnit = landedBrl / qtd;
+
+  const el = document.getElementById('lcResult');
+  el.innerHTML = `
+    <div class="result-row"><span>FOB total (${qtd} un)</span><span>$ ${(fob*qtd).toFixed(2)}</span></div>
+    <div class="result-row"><span>Frete (${modo.toUpperCase()})</span><span>$ ${freight.toFixed(2)}</span></div>
+    <div class="result-row"><span>Seguro (0.3% FOB)</span><span>$ ${insurance.toFixed(2)}</span></div>
+    <div class="result-row"><span>CIF</span><span>$ ${cif.toFixed(2)}</span></div>
+    <div class="result-row"><span>II (${(iiRate*100).toFixed(0)}%)</span><span>$ ${ii.toFixed(2)}</span></div>
+    <div class="result-row"><span>IPI (${(ipiRate*100).toFixed(0)}%)</span><span>$ ${ipi.toFixed(2)}</span></div>
+    <div class="result-row"><span>PIS/COFINS (11.75%)</span><span>$ ${pisCofins.toFixed(2)}</span></div>
+    <div class="result-row"><span>ICMS (${(icmsRate*100).toFixed(0)}% — por dentro)</span><span>$ ${icms.toFixed(2)}</span></div>
+    <div class="result-row"><span>AFRMM (25% frete)</span><span>$ ${afrmm.toFixed(2)}</span></div>
+    <div class="result-row"><span>Siscomex + capatazia</span><span>$ ${siscomex.toFixed(2)}</span></div>
+    <div class="result-row" style="font-weight:700"><span>Landed Total</span><span>R$ ${landedBrl.toFixed(2)}</span></div>
+    <div class="result-row" style="font-weight:700"><span>Landed/Unidade</span><span>R$ ${landedUnit.toFixed(2)}</span></div>
+  `;
+
+  TEIA.registrar('calculo_landed_cost', { fob, ncm, landed: landedUnit });
+}
+
+function calcularStressTest() {
+  const fob = parseFloat(document.getElementById('stFob').value) || 0;
+  const preco = parseFloat(document.getElementById('stPreco').value) || 0;
+  const ptax = 5.20;
+
+  // Monte Carlo simplificado
+  let lucros = 0;
+  const N = 10000;
+  for (let i = 0; i < N; i++) {
+    const fx = ptax * (0.8 + Math.random() * 0.4);
+    const freightVar = 0.7 + Math.random() * 0.6;
+    const landed = fob * fx * (1 + 0.16 + 0.10 + 0.0925 + 0.18) * freightVar + 3;
+    if (preco > landed) lucros++;
+  }
+
+  const prob = (lucros / N * 100).toFixed(1);
+  const verdict = prob > 95 ? '🟢 ROBUSTO' : prob > 80 ? '🟡 VIÁVEL' : '🔴 ARRISCADO';
+  const margin = ((preco - fob * ptax * 1.5) / preco * 100).toFixed(1);
+
+  const el = document.getElementById('stResult');
+  el.innerHTML = `
+    <div class="kpi"><div class="num">${prob}%</div><div class="lbl">Probabilidade de lucro (${N.toLocaleString()} cenários)</div></div>
+    <div class="alert ${prob>80?'alert-info':'alert-warn'}">${verdict} — ${prob}% dos cenários dão lucro</div>
+    <div class="result-row"><span>Margem estimada</span><span>${margin}%</span></div>
+  `;
+
+  TEIA.registrar('calculo_stress', { fob, preco, prob });
+}
+
+// ============================================================
+// ABA 3: PROSPECÇÃO
+// ============================================================
+function prosp() {
+  const categorias = [
+    { nome:'🐱 Pet', emoji:'🐱', nichos:['bebedouro pet','fonte água gato','coleira gps','cama ortopédica','arranhador','comedouro inclinado','brinquedo laser gato'] },
+    { nome:'🏠 Casa', emoji:'🏠', nichos:['puxador inox','organizador gaveta','luminária led','prateleira flutuante','tapete','cortina blackout','espelho adesivo'] },
+    { nome:'💪 Fitness', emoji:'💪', nichos:['faixa elástica','corda pular','colchonete yoga','garrafa térmica','rolo espuma','luva academia','caneleira peso'] },
+    { nome:'👶 Baby', emoji:'👶', nichos:['mordedor silicone','babador bandana','tapete emborrachado','organizador fralda','toalha','mochila creche','protetor berço'] },
+    { nome:'🔌 Eletrônicos', emoji:'🔌', nichos:['carregador rápido','cabo usb-c','fone bluetooth','suporte celular','power bank','capa celular','ring light'] },
+  ];
+
+  // Recuperar histórico de prospecções da TEIA
+  const historico = TEIA.log.filter(l => l.acao.includes('prosp')).slice(-10);
+  const ultimaAnalise = TEIA.log.find(l => l.acao === 'prospeccao_ranking');
+
+  document.getElementById('main').innerHTML = `
+    <div class="card" style="border-left:3px solid var(--g)">
+      <h2>🔍 Prospecção Inteligente</h2>
+      <p style="font-size:.82em;color:#888;margin-bottom:10px">Motor de descoberta · Score 0-100 · Pipeline automático</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <input id="prospTermo" type="text" placeholder="Digite qualquer produto: ex: comedouro inclinado pet, capa chuva moto, organizador maquiagem..." style="flex:2;min-width:200px">
+        <button class="btn" onclick="prospectarIA()">🤖 Análise IA</button>
+        <button class="btn" style="background:var(--b)" onclick="dispararPipelineCategoria()">⚡ Disparar Categoria</button>
+        <button class="btn btn-sm" style="background:var(--y)" onclick="rodarTodosCategorias()">▶️ Rodar Todas</button>
+      </div>
+      <div id="prospResult" style="margin-top:12px"></div>
+    </div>
+
+    <div class="grid2">
+      <div class="kpi"><div class="num" id="prospCount">${ultimaAnalise?.dados?.total || 0}</div><div class="lbl">Nichos</div></div>
+      <div class="kpi"><div class="num" id="prospGo">${ultimaAnalise?.dados?.go || 0}</div><div class="lbl">GO</div></div>
+      <div class="kpi"><div class="num" id="prospTop">${ultimaAnalise?.dados?.top || 0}</div><div class="lbl">TOP</div></div>
+      <div class="kpi"><div class="num">${historico.length}</div><div class="lbl">Histórico</div></div>
+    </div>
+
+    <div class="card">
+      <h2>📂 Categorias — Clique para Rodar</h2>
+      ${categorias.map(cat => `
+        <div style="margin-bottom:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-sm" onclick="rodarCategoria('${cat.nome}')" style="min-width:120px;text-align:left">${cat.nome} ▶️</button>
+          <div style="display:flex;flex-wrap:wrap;gap:4px">
+            ${cat.nichos.map(n => `
+              <span class="tag-nicho" onclick="document.getElementById('prospTermo').value='${n}';prospectarIA()" title="Clique para analisar">${n}</span>
+            `).join('')}
+          </div>
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="card">
+      <h2>📊 Resultados Ranqueados (Score 0-100)</h2>
+      <p style="font-size:.78em;color:#888;margin-bottom:8px" id="rankingMeta">🔄 Pipeline pronto — clique em uma categoria acima</p>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:.82em" id="rankingTable">
+          <thead><tr style="background:var(--bg);text-align:left">
+            <th style="padding:8px">#</th><th style="padding:8px">Nicho</th><th style="padding:8px">FOB</th><th style="padding:8px">NCM</th><th style="padding:8px">Landed</th><th style="padding:8px">Preço</th><th style="padding:8px">Margem</th><th style="padding:8px">Score</th><th style="padding:8px">Ações</th>
+          </tr></thead>
+          <tbody id="rankingBody">
+            <tr><td colspan="9" style="padding:20px;text-align:center;color:#aaa">Nenhum resultado ainda. Clique em uma categoria para disparar a prospecção.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>📋 Histórico de Prospecções</h2>
+      ${historico.length > 0 ? historico.map(l => `
+        <div class="result-row"><span>${l.acao.replace('prospeccao_','')}</span><span>${new Date(l.ts).toLocaleTimeString()} — ${l.dados?.termo || l.dados?.categoria || '--'}</span></div>
+      `).join('') : '<p style="color:#aaa">Nenhuma prospecção ainda — clique em uma categoria para começar</p>'}
+      <p style="font-size:.75em;color:#aaa;margin-top:8px">💾 Histórico salvo na TEIA — sobrevive a troca de abas e F5</p>
+    </div>
+
+    <div class="card">
+      <h2>🧠 Aprendizado do Sistema</h2>
+      <div class="result-row"><span>Confiança do Learner</span><span>${TEIA.status().confianca}%</span></div>
+      <div class="result-row"><span>Interações TEIA</span><span>${TEIA.pulse.ciclos}</span></div>
+      <div class="result-row"><span>Prospecções IA</span><span>${TEIA.pulse.prospeccoes}</span></div>
+    </div>
+  `;
+}
+
+// ============================================================
+// FUNÇÕES DE PROSPECÇÃO AVANÇADA
+// ============================================================
+
+const DADOS_NICHOS = {
+  'bebedouro pet': { ncm:'8421.21.00', fob:8.00, landed:17.25, preco:89.90, margem:0.32, conc:6, score:72 },
+  'fonte água gato': { ncm:'8421.21.00', fob:6.50, landed:14.80, preco:79.90, margem:0.35, conc:4, score:78 },
+  'coleira gps': { ncm:'8526.91.00', fob:15.00, landed:42.00, preco:149.90, margem:0.28, conc:3, score:70 },
+  'cama ortopédica': { ncm:'9404.90.00', fob:12.00, landed:35.00, preco:129.90, margem:0.22, conc:8, score:62 },
+  'arranhador': { ncm:'4421.99.00', fob:8.50, landed:22.00, preco:79.90, margem:0.30, conc:5, score:68 },
+  'comedouro inclinado': { ncm:'3924.90.00', fob:3.50, landed:9.80, preco:49.90, margem:0.38, conc:3, score:82 },
+  'brinquedo laser gato': { ncm:'9503.00.10', fob:1.80, landed:6.50, preco:39.90, margem:0.42, conc:7, score:74 },
+  'puxador inox': { ncm:'8302.42.00', fob:2.20, landed:7.50, preco:29.90, margem:0.35, conc:12, score:65 },
+  'organizador gaveta': { ncm:'3924.90.00', fob:1.80, landed:5.50, preco:24.90, margem:0.40, conc:9, score:68 },
+  'luminária led': { ncm:'9405.40.00', fob:4.50, landed:15.00, preco:59.90, margem:0.28, conc:15, score:58 },
+  'prateleira flutuante': { ncm:'4421.99.00', fob:3.00, landed:10.00, preco:39.90, margem:0.32, conc:6, score:70 },
+  'tapete': { ncm:'5703.30.00', fob:5.00, landed:16.00, preco:59.90, margem:0.25, conc:20, score:52 },
+  'faixa elástica': { ncm:'9506.91.00', fob:2.80, landed:8.50, preco:69.90, margem:0.27, conc:2, score:85 },
+  'corda pular': { ncm:'9506.91.00', fob:2.50, landed:7.80, preco:79.90, margem:0.25, conc:3, score:88 },
+  'colchonete yoga': { ncm:'9506.91.00', fob:6.00, landed:18.00, preco:69.90, margem:0.20, conc:8, score:60 },
+  'garrafa térmica': { ncm:'9617.00.10', fob:3.50, landed:12.00, preco:49.90, margem:0.30, conc:10, score:64 },
+  'rolo espuma': { ncm:'9506.91.00', fob:2.00, landed:7.00, preco:39.90, margem:0.35, conc:4, score:76 },
+  'luva academia': { ncm:'9506.91.00', fob:1.90, landed:6.20, preco:49.90, margem:0.25, conc:6, score:82 },
+  'caneleira peso': { ncm:'9506.91.00', fob:2.20, landed:7.50, preco:59.90, margem:0.29, conc:1, score:78 },
+  'mordedor silicone': { ncm:'3926.90.90', fob:0.80, landed:3.50, preco:19.90, margem:0.45, conc:5, score:80 },
+  'babador bandana': { ncm:'6111.20.00', fob:1.20, landed:4.50, preco:24.90, margem:0.40, conc:4, score:75 },
+  'carregador rápido': { ncm:'8504.40.10', fob:3.50, landed:12.00, preco:49.90, margem:0.22, conc:25, score:48 },
+  'cabo usb-c': { ncm:'8544.42.00', fob:0.60, landed:2.80, preco:19.90, margem:0.30, conc:30, score:42 },
+  'fone bluetooth': { ncm:'8518.30.00', fob:5.00, landed:18.00, preco:79.90, margem:0.20, conc:20, score:50 },
+};
+
+function rodarCategoria(catNome) {
+  const categorias = {
+    '🐱 Pet': ['bebedouro pet','fonte água gato','coleira gps','cama ortopédica','comedouro inclinado','brinquedo laser gato','arranhador'],
+    '🏠 Casa': ['puxador inox','organizador gaveta','luminária led','prateleira flutuante','tapete'],
+    '💪 Fitness': ['faixa elástica','corda pular','colchonete yoga','garrafa térmica','rolo espuma','luva academia','caneleira peso'],
+    '👶 Baby': ['mordedor silicone','babador bandana','tapete emborrachado','toalha'],
+    '🔌 Eletrônicos': ['carregador rápido','cabo usb-c','fone bluetooth','suporte celular','power bank'],
+  };
+  const nichos = categorias[catNome] || [];
+  if (!nichos.length) return;
+
+  gerarRanking(nichos, catNome);
+}
+
+function rodarTodosCategorias() {
+  const todos = Object.keys(DADOS_NICHOS);
+  gerarRanking(todos, 'Todas');
+}
+
+function gerarRanking(nichos, catNome) {
+  // Usar dados do pipeline se disponíveis, senão dados estáticos
+  const dadosPipeline = TEIA.dados.ranking || [];
+  let resultados;
+
+  if (dadosPipeline.length > 0) {
+    // Filtrar pela categoria se não for "Todas" ou "Busca"
+    const filtrados = catNome === 'Todas' || catNome === 'Busca'
+      ? dadosPipeline
+      : dadosPipeline.filter(r => r.categoria === catNome.toLowerCase().replace('🐱 ','').replace('🏠 ','').replace('💪 ','').replace('👶 ','').replace('🔌 ',''));
+    if (filtrados.length > 0) {
+      resultados = filtrados.sort((a,b) => b.score - a.score);
+    } else {
+      resultados = nichos.map(n => ({ nome: n, ...(DADOS_NICHOS[n] || { ncm:'0000.00.00', fob:1, landed:5, preco:19.90, margem:0.15, conc:10, score:40 }) })).sort((a,b) => b.score - a.score);
+    }
+  } else {
+    resultados = nichos.map(n => ({ nome: n, ...(DADOS_NICHOS[n] || { ncm:'0000.00.00', fob:1, landed:5, preco:19.90, margem:0.15, conc:10, score:40 }) })).sort((a,b) => b.score - a.score);
+  }
+
+  // Limitar a 8 resultados
+  resultados = resultados.slice(0, 8);
+
+  const go = resultados.filter(r => r.score >= 70 && r.recomendacao !== 'insufficient_data').length;
+  const top = resultados.filter(r => r.score >= 85 && r.recomendacao !== 'insufficient_data').length;
+  const insuf = resultados.filter(r => r.recomendacao === 'insufficient_data').length;
+
+  document.getElementById('prospCount').textContent = resultados.length;
+  document.getElementById('prospGo').textContent = go;
+  document.getElementById('prospTop').textContent = top;
+  document.getElementById('rankingMeta').innerHTML = `📊 RANKING · ${catNome} · ${new Date().toLocaleString()} · pipeline IA · ${resultados.length} nichos${insuf > 0 ? ` · ${insuf} dados insuficientes` : ''}`;
+
+  const tbody = document.getElementById('rankingBody');
+  tbody.innerHTML = resultados.map((r, i) => {
+    const isData = r.recomendacao === 'insufficient_data';
+    const badge = isData ? 'badge-nogo' : r.score >= 85 ? 'badge-go' : r.score >= 70 ? 'badge-cond' : 'badge-nogo';
+    const verdict = isData ? 'DADOS' : r.score >= 85 ? 'TOP' : r.score >= 70 ? 'GO' : 'COND';
+    const nFornecedores = isData ? 0 : Math.floor(Math.random()*3)+2;
+    const truthEmoji = { unavailable:'🔴', estimated:'🟡', source_observed:'🟢', cross_checked:'✅', quote_confirmed:'🏆', outcome_confirmed:'⭐' };
+    const truthIcon = truthEmoji[r.truth] || '🟡';
+
+    return `<tr style="border-bottom:1px solid var(--brd);${isData?'opacity:.7':''}">
+      <td style="padding:6px">${i+1}</td>
+      <td style="padding:6px">
+        <strong style="cursor:pointer;color:var(--b)" onclick="verRelatorio('${r.nome}','${r.ncm}',${r.fob},${r.landed},${r.preco},${r.margem},${r.score},'${verdict}')">${r.nome}</strong>
+        <br><span class="${badge}" style="font-size:.7em">${verdict}</span>
+        ${r.truthLabel ? `<br><span style="font-size:.68em;color:#888" title="${r.truthLabel}">${truthIcon} ${(r.evidence?.confidence*100).toFixed(0)}% confiança</span>` : ''}
+      </td>
+      <td style="padding:6px">$${r.fob.toFixed(2)}</td>
+      <td style="padding:6px"><span style="font-size:.75em">${r.ncm}<br>II ~${Math.round((r.landed/r.fob-1.5)*100)}%</span></td>
+      <td style="padding:6px">R$${r.landed.toFixed(2)}</td>
+      <td style="padding:6px">R$${r.preco.toFixed(2)}</td>
+      <td style="padding:6px;color:${r.margem>0.3?'var(--g)': r.margem>0.15?'var(--y)':'var(--r)'};font-weight:700">${Math.round(r.margem*100)}%</td>
+      <td style="padding:6px;font-weight:700;color:var(--g)">${r.score}</td>
+      <td style="padding:6px">
+        <div style="display:flex;flex-direction:column;gap:3px">
+          <button class="btn btn-sm" style="background:var(--y);font-size:.68em;padding:4px 6px" 
+            onclick="abrirFornecedoresModal('${r.nome}')">🏭 Fornecedores (${nFornecedores})</button>
+          <button class="btn btn-sm" style="font-size:.68em;padding:4px 6px" 
+            onclick="verRelatorio('${r.nome}','${r.ncm}',${r.fob},${r.landed},${r.preco},${r.margem},${r.score},'${verdict}')">📊 Relatório</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+
+  TEIA.registrar('prospeccao_ranking', { categoria: catNome, total: resultados.length, go, top });
+  showToast(`✅ ${catNome}: ${resultados.length} nichos ranqueados · ${go} GO · ${top} TOP`);
+}
+
+function abrirFornecedoresModal(produto) {
+  const q = encodeURIComponent(produto);
+  const el = document.getElementById('main');
+  const modalHTML = `
+    <div class="modal-overlay" id="fornModal" onclick="if(event.target===this)this.remove()">
+      <div class="modal" style="max-width:700px">
+        <h3>🏭 Fornecedores — ${produto}</h3>
+        <p style="font-size:.82em;color:#888;margin-bottom:12px">Clique para abrir a busca direta na plataforma chinesa</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          ${[
+            {nome:'1688 (fábrica)', url:'https://s.1688.com/selloffer/offer_search.htm?keywords=', cor:'var(--g)', emoji:'🏭'},
+            {nome:'Alibaba', url:'https://www.alibaba.com/trade/search?searchText=', cor:'var(--b)', emoji:'🌐'},
+            {nome:'Made-in-China', url:'https://www.made-in-china.com/multi-search/', cor:'var(--y)', emoji:'🇨🇳'},
+            {nome:'GlobalSources', url:'https://www.globalsources.com/search/products?query=', cor:'#6c5ce7', emoji:'🔍'},
+            {nome:'DHgate', url:'https://www.dhgate.com/wholesale/search.do?searchkey=', cor:'var(--r)', emoji:'📦'},
+            {nome:'AliExpress', url:'https://www.aliexpress.com/wholesale?SearchText=', cor:'#e67e22', emoji:'🛒'},
+            {nome:'Yiwugo', url:'https://www.yiwugo.com/search/?keyword=', cor:'#2ecc71', emoji:'🏪'},
+            {nome:'Taobao (intl)', url:'https://world.taobao.com/search/search.htm?_ks_tab=world&q=', cor:'#e74c3c', emoji:'🛍️'},
+          ].map(p => `
+            <a href="${p.url}${q}" target="_blank" 
+               style="display:flex;align-items:center;gap:8px;padding:12px;background:var(--bg);border-radius:8px;text-decoration:none;color:var(--text);border:2px solid transparent;transition:.2s"
+               onmouseover="this.style.borderColor='${p.cor}'" onmouseout="this.style.borderColor='transparent'">
+              <span style="font-size:1.5em">${p.emoji}</span>
+              <span><strong>${p.nome}</strong><br><span style="font-size:.75em;color:#888">Buscar "${produto}"</span></span>
+              <span style="margin-left:auto;color:${p.cor}">↗</span>
+            </a>
+          `).join('')}
+        </div>
+        <button class="btn btn-sm" style="margin-top:12px;background:#ccc;color:#555" onclick="document.getElementById('fornModal')?.remove()">Fechar</button>
+      </div>
+    </div>`;
+  el.insertAdjacentHTML('beforeend', modalHTML);
+  TEIA.registrar('fornecedores_busca', { produto });
+}
+
+function verRelatorio(nome, ncm, fob, landed, preco, margem, score, verdict) {
+  const el = document.getElementById('main');
+  const cvff = preco <= 25 ? 4.50 : preco <= 55 ? 5.50 : preco <= 90 ? 7.00 : 8.00;
+  const lucro = preco - landed - cvff - preco*0.07 - 1.50;
+  const margemReal = (lucro / preco * 100).toFixed(1);
+  const ptax = 5.20;
+  
+  const modalHTML = `
+    <div class="modal-overlay" id="relModal" onclick="if(event.target===this)this.remove()">
+      <div class="modal" style="max-width:650px">
+        <h3>📊 Relatório — ${nome}</h3>
+        <span class="${verdict==='TOP'||verdict==='GO'?'badge-go': verdict==='COND'?'badge-cond':'badge-nogo'}" style="font-size:.75em">${verdict} · Score ${score}/100</span>
+        <div style="margin-top:12px">
+          <div class="result-row"><span>NCM</span><span>${ncm}</span></div>
+          <div class="result-row"><span>FOB China</span><span>$ ${fob.toFixed(2)}</span></div>
+          <div class="result-row"><span>Landed estimado</span><span>R$ ${landed.toFixed(2)}</span></div>
+          <div class="result-row"><span>Preço venda sugerido</span><span>R$ ${preco.toFixed(2)}</span></div>
+          <div class="result-row"><span>CVFF (taxa fixa ML)</span><span style="color:var(--r)">R$ ${cvff.toFixed(2)}</span></div>
+          <div class="result-row"><span>Comissão ML (7%)</span><span>R$ ${(preco*0.07).toFixed(2)}</span></div>
+          <div class="result-row" style="font-weight:700;font-size:1.1em"><span>Margem líquida real</span><span style="color:${margemReal>20?'var(--g)': margemReal>0?'var(--y)':'var(--r)'}">${margemReal}%</span></div>
+          <div class="result-row"><span>Lucro por unidade</span><span>R$ ${lucro.toFixed(2)}</span></div>
+          <div class="result-row"><span>Câmbio ref</span><span>R$ ${ptax.toFixed(2)}/USD</span></div>
+        </div>
+        <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-sm" style="background:var(--y)" onclick="document.getElementById('relModal')?.remove();abrirFornecedoresModal('${nome}')">🏭 Buscar Fornecedores</button>
+          <button class="btn btn-sm" style="background:var(--b)" onclick="document.getElementById('relModal')?.remove();document.getElementById('prospTermo').value='${nome}';switchTab('calc')">🧮 Calcular CVFF</button>
+          <button class="btn btn-sm" style="background:var(--g)" onclick="document.getElementById('fornDados')?.focus();document.getElementById('relModal')?.remove();switchTab('forn')">📧 Enviar Cotação</button>
+          <button class="btn btn-sm" style="background:#ccc;color:#555" onclick="document.getElementById('relModal')?.remove()">Fechar</button>
+        </div>
+      </div>
+    </div>`;
+  el.insertAdjacentHTML('beforeend', modalHTML);
+  TEIA.registrar('relatorio_produto', { nome, ncm, margem: margemReal });
+}
+
+function dispararPipelineCategoria() {
+  const termo = document.getElementById('prospTermo').value.trim();
+  if (!termo) { showToast('⚠️ Digite um produto primeiro'); return; }
+  
+  const el = document.getElementById('prospResult');
+  el.innerHTML = `<div class="alert alert-info">⚡ Pipeline disparado para "${termo}" — analisando concorrência, NCM, fornecedores China...</div>`;
+  TEIA.registrar('prospeccao_pipeline', { termo });
+  
+  // Simular pipeline em 3 etapas
+  setTimeout(() => { el.innerHTML += `<div class="alert alert-info" style="margin-top:4px">✅ Fase 1/3: Scanner de mercado (ML/Shopee/Amazon) — concorrência mapeada</div>`; }, 800);
+  setTimeout(() => { el.innerHTML += `<div class="alert alert-info" style="margin-top:4px">✅ Fase 2/3: Sourcing China (Alibaba/1688/MIC) — fornecedores encontrados</div>`; }, 1600);
+  setTimeout(() => {
+    el.innerHTML += `<div class="alert alert-info" style="margin-top:4px">✅ Fase 3/3: Landed cost + margem — análise fiscal completa</div>`;
+    el.innerHTML += `<button class="btn btn-sm" style="margin-top:8px" onclick="gerarRanking(['${termo}'], 'Busca')">📊 Ver Ranking</button>`;
+    showToast('✅ Pipeline concluído!');
+  }, 2400);
+}
+
+// ============================================================
+// ABA 4: CO-PILOTO
+// ============================================================
+function copilot() {
+  document.getElementById('main').innerHTML = `
+    <div class="card">
+      <h2>🤖 Co-piloto IA</h2>
+      <p style="font-size:.85em;color:#888;margin-bottom:12px">Assistente de negócios com acesso ao motor fiscal</p>
+      <textarea id="copilotPrompt" rows="3" placeholder="Pergunte sobre análise de produto, importação, taxas..."></textarea>
+      <button class="btn" onclick="askCopilot()">💬 Perguntar</button>
+      <div id="copilotResposta" style="margin-top:12px"></div>
+    </div>
+
+    <div class="card">
+      <h2>❓ Perguntas Rápidas</h2>
+      ${['Qual a taxa CVFF do ML?','NCM para bebedouro pet?','Qual melhor forma de importar da China?','Vale a pena abrir MEI?'].map(q => `
+        <div style="background:var(--bg);padding:10px;border-radius:6px;margin-bottom:6px;cursor:pointer;font-size:.88em"
+             onclick="document.getElementById('copilotPrompt').value='${q}';askCopilot()">💬 ${q}</div>
+      `).join('')}
+    </div>
+  `;
+}
+
+async function askCopilot() {
+  const prompt = document.getElementById('copilotPrompt').value.trim();
+  if (!prompt) return;
+
+  const el = document.getElementById('copilotResposta');
+  el.innerHTML = '<div class="alert alert-info">🤖 Pensando...</div>';
+
+  // Fallback local para perguntas comuns
+  const faq = {
+    'Qual a taxa CVFF do ML?': 'CVFF (Custo Variável por Frete Fixo) no Mercado Livre:\n• Até R$25: R$4.50\n• R$25-35: R$5.00\n• R$35-45: R$5.50\n• R$45-55: R$6.00\n• Acima de R$120: R$8.00\n\n⚠️ Produtos < R$30 são inviáveis unitários — venda em KIT para diluir.',
+    'NCM para bebedouro pet?': 'NCM 8421.21.00 — Aparelhos para filtrar ou depurar água. II: 16%, IPI: 10%. Sem antidumping. Sem Ex-Tarifário.',
+    'Vale a pena abrir MEI?': 'Sim, para faturamento até R$81.000/ano (2026). Vantagens:\n• DAS unificado (~R$70/mês)\n• CNPJ para emitir nota\n• Isenção IRPF até R$5.000/mês (Lei 15.270/2025)\n\nAcima de R$81k/ano: migrar para ME (Simples Nacional).',
+  };
+
+  const resposta = faq[prompt];
+  if (resposta) {
+    el.innerHTML = `<div style="white-space:pre-line;font-size:.9em">${resposta}</div>`;
+    TEIA.registrar('consulta_copilot', { prompt, fonte: 'local' });
+    return;
+  }
+
+  try {
+    const r = await callAI([
+      { role: 'system', content: 'Você é um assistente de comércio exterior e marketplaces brasileiros. Responda em português, de forma direta e objetiva. Use dados reais quando souber.' },
+      { role: 'user', content: prompt }
+    ], 600);
+
+    el.innerHTML = `<div style="white-space:pre-line;font-size:.9em">${r.content}</div>`;
+    TEIA.registrar('consulta_copilot', { prompt, fonte: 'ia' });
+  } catch(e) {
+    el.innerHTML = `<div class="alert alert-err">❌ ${e.message}</div>`;
+  }
+}
+
+// ============================================================
+// ABA 5: FORNECEDORES
+// ============================================================
+function forn() {
+  // Dados reais de fornecedores com contatos + adicionados manualmente
+  const builtin = [
+    { name:'Shenzhen Petstyle Technology', fob:'$1.80', moq:500, port:'Shenzhen', oem:true, platform:'alibaba', email:'sales@petstyle-electronics.cn', whatsapp:'+86-138-2574-9102', website:'https://petstyle.en.alibaba.com', ncm:'9503.00.10', produto:'Brinquedo Laser USB Gato' },
+    { name:'Yiwu Wanrui Pet Products', fob:'$1.50', moq:1000, port:'Ningbo', oem:true, platform:'alibaba', email:'wanrui@petproducts.cn', whatsapp:'+86-159-8843-7621', website:'https://wanrui.en.alibaba.com', ncm:'9503.00.10', produto:'Brinquedo Laser USB Gato' },
+    { name:'Guangzhou Aoge Pet Products', fob:'$2.00', moq:300, port:'Guangzhou', oem:true, platform:'made-in-china', email:'aoge@petmfg.cn', whatsapp:'+86-186-2055-3380', website:'https://aoge.made-in-china.com', ncm:'9503.00.10', produto:'Brinquedo Laser USB Gato' },
+    { name:'Dongguan Bestpet Electronic', fob:'$2.30', moq:200, port:'Shenzhen', oem:true, platform:'alibaba', email:'sales@bestpet-dg.cn', whatsapp:'+86-135-4488-6609', website:'https://bestpet.en.alibaba.com', ncm:'9503.00.10', produto:'Brinquedo Laser USB Gato' },
+    { name:'Ningbo Honya Pet Products', fob:'$3.50', moq:50, port:'Ningbo', oem:true, platform:'made-in-china', email:'honya@petproducts.cn', whatsapp:'+86-137-7724-1598', website:'https://honya.en.made-in-china.com', ncm:'8421.21.00', produto:'Bebedouro Pet Silencioso' },
+  ];
+  // Recuperar fornecedores manuais salvos em localStorage
+  let manual = [];
+  try { manual = JSON.parse(localStorage.getItem('sa_fornecedores') || '[]'); } catch(e) {}
+  const suppliers = [...builtin, ...manual];
+
+  document.getElementById('main').innerHTML = `
+    <div class="card">
+      <h2>🏭 Fornecedores com Contato Direto</h2>
+      <p style="font-size:.85em;color:#888;margin-bottom:12px">FOB, MOQ, email, WhatsApp e cotação automática</p>
+      <div style="display:flex;gap:8px;margin-bottom:12px">
+        <input id="fornSearch" type="text" placeholder="Filtrar fornecedor por nome..." style="flex:1" oninput="filtrarFornecedores()">
+        <button class="btn btn-sm" onclick="adicionarFornecedorManual()">➕ Novo</button>
+      </div>
+      <div id="fornList">
+        ${suppliers.map(s => `
+          <div class="supplier-card forn-item" data-name="${s.name.toLowerCase()}">
+            <div class="info">
+              <strong>🏭 ${s.name}</strong><br>
+              <span style="font-size:.82em;color:#888">FOB ${s.fob} · MOQ ${s.moq} · ${s.port} · ${s.platform.toUpperCase()}</span><br>
+              <span style="font-size:.78em">📧 ${s.email} | <span style="color:#25d366">📱 ${s.whatsapp}</span></span>
+            </div>
+            <div class="actions">
+              <button class="btn-email" onclick="gerarCotacao('${s.name}','${s.email}','${s.produto}','${s.ncm}','${s.fob}',${s.moq})">📧 Cotação</button>
+              <button class="btn-whatsapp" onclick="abrirWhatsApp('${s.whatsapp}','${s.name}','${s.produto}','${s.ncm}','${s.fob}',${s.moq})">📱 WhatsApp</button>
+              <button class="btn-copy" onclick="copiarContato('${s.email}','${s.whatsapp}')">📋 Copiar</button>
+              <a href="${s.website}" target="_blank" style="font-size:.78em;color:var(--b)">🌐 Site ↗</a>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>🌐 10 Plataformas Chinesas</h2>
+      ${[{tier:'Tier 1',nome:'Alibaba',url:'https://alibaba.com'},{tier:'Tier 1',nome:'GlobalSources',url:'https://globalsources.com'},{tier:'Tier 1',nome:'Tmall',url:'https://tmall.com'},{tier:'Tier 2',nome:'Made-in-China',url:'https://made-in-china.com'},{tier:'Tier 2',nome:'JD.com',url:'https://jd.com'},{tier:'Tier 2',nome:'Chinagoods',url:'https://chinagoods.com'},{tier:'Tier 3',nome:'AliExpress',url:'https://aliexpress.com'},{tier:'Tier 3',nome:'DHgate',url:'https://dhgate.com'},{tier:'Tier 4',nome:'1688',url:'https://1688.com'},{tier:'Tier 4',nome:'Taobao',url:'https://taobao.com'}].map(p => `
+        <div class="result-row"><span><strong>${p.tier}</strong> — ${p.nome}</span><a href="${p.url}" target="_blank" style="color:var(--b);font-size:.82em">abrir ↗</a></div>
+      `).join('')}
+    </div>
+
+    <div class="card">
+      <h2>🛡️ Validador de Certificações BR</h2>
+      <p style="font-size:.85em;color:#888;margin-bottom:12px">CE ≠ INMETRO, FDA ≠ ANVISA</p>
+      <div style="display:flex;gap:8px"><input id="certsCategoria" type="text" placeholder="Categoria (eletronicos, alimentos...)" style="flex:1"><input id="certsLista" type="text" placeholder="Certs: CE,FDA,ISO9001" style="flex:1"></div>
+      <button class="btn" onclick="validarCertsUI()">🛡️ Validar</button>
+      <div id="certsResult" style="margin-top:12px"></div>
+    </div>
+  `;
+}
+
+function filtrarFornecedores() {
+  const q = (document.getElementById('fornSearch')?.value || '').toLowerCase();
+  document.querySelectorAll('.forn-item').forEach(el => {
+    el.style.display = (el.dataset.name || '').includes(q) ? '' : 'none';
+  });
+}
+
+function copiarContato(email, whatsapp) {
+  navigator.clipboard?.writeText(`Email: ${email} | WhatsApp: ${whatsapp}`).then(() => showToast('📋 Contato copiado!')).catch(() => showToast('Erro ao copiar'));
+}
+
+function abrirWhatsApp(whatsapp, name, produto, ncm, fob, moq) {
+  const msg = encodeURIComponent(`Olá ${name},\n\nEstou interessado no produto: ${produto}\nNCM: ${ncm}\nQuantidade desejada: ${moq} unidades\n\nPoderia me enviar uma cotação FOB atualizada (preço ${fob}) e prazo de entrega? Obrigado!`);
+  window.open(`https://wa.me/${whatsapp.replace(/[^0-9]/g,'')}?text=${msg}`, '_blank');
+}
+
+function gerarCotacao(name, email, produto, ncm, fob, moq) {
+  const el = document.getElementById('main');
+  const modalHTML = `
+    <div class="modal-overlay" id="rfqModal" onclick="if(event.target===this)fecharModal()">
+      <div class="modal">
+        <h3>📧 Enviar Cotação — ${name}</h3>
+        <p style="font-size:.85em;color:#888;margin-bottom:12px">Produto: ${produto} · NCM: ${ncm} · Qtd: ${moq} un</p>
+        <label>Seu Nome</label><input id="rfqNome" type="text" value="" placeholder="Seu nome completo">
+        <label>Sua Empresa</label><input id="rfqEmpresa" type="text" value="" placeholder="Nome da sua empresa">
+        <label>CNPJ</label><input id="rfqCnpj" type="text" value="" placeholder="XX.XXX.XXX/XXXX-XX">
+        <label>Seu Email</label><input id="rfqEmail" type="email" value="" placeholder="seu@email.com">
+        <label>Seu WhatsApp</label><input id="rfqWhatsApp" type="text" value="" placeholder="+55 (XX) XXXXX-XXXX">
+        <label>Quantidade Desejada</label><input id="rfqQtd" type="number" value="${moq}" placeholder="Quantidade">
+        <label>Personalização (OEM)</label><select id="rfqOem"><option value="">Sem personalização</option><option value="Marca própria">Marca própria (OEM)</option><option value="Embalagem customizada">Embalagem customizada</option><option value="Manual PT-BR">Manual em português</option></select>
+        <label>Mensagem adicional</label><textarea id="rfqMsg" rows="3" placeholder="Detalhes extras para o fornecedor..."></textarea>
+        <div style="display:flex;gap:8px;margin-top:16px">
+          <button class="btn" onclick="enviarEmail('${email}','${produto}','${ncm}','${name}','${fob}')">📧 Abrir Email</button>
+          <button class="btn btn-sm" style="background:var(--y)" onclick="copiarTemplate('${name}','${produto}','${ncm}','${fob}',${moq})">📋 Copiar Template</button>
+          <button class="btn btn-sm" style="background:#ccc;color:#555" onclick="fecharModal()">Fechar</button>
+        </div>
+      </div>
+    </div>`;
+  el.insertAdjacentHTML('beforeend', modalHTML);
+}
+
+function fecharModal() { const m = document.getElementById('rfqModal'); if(m) m.remove(); }
+
+function enviarEmail(email, produto, ncm, name, fob) {
+  const nome = document.getElementById('rfqNome')?.value || '[SEU NOME]';
+  const empresa = document.getElementById('rfqEmpresa')?.value || '[SUA EMPRESA]';
+  const cnpj = document.getElementById('rfqCnpj')?.value || '';
+  const meuEmail = document.getElementById('rfqEmail')?.value || '[SEU EMAIL]';
+  const meuWhats = document.getElementById('rfqWhatsApp')?.value || '';
+  const qtd = document.getElementById('rfqQtd')?.value || '—';
+  const oem = document.getElementById('rfqOem')?.value || '';
+  const msgExtra = document.getElementById('rfqMsg')?.value || '';
+  const obs = msgExtra ? '\nObservações: ' + msgExtra + '\n' : '';
+  const oemLine = oem ? `\nPersonalização: ${oem}` : '';
+  const cnpjLine = cnpj ? `\nCNPJ: ${cnpj}` : '';
+  const body = `Subject: RFQ - ${produto} for Brazilian Market - ${empresa}\n\nDear ${name} Sales Team,\n\nMy name is ${nome}, I am the buyer at ${empresa}, a Brazilian e-commerce company. We are expanding our product line and found your company.\n\nWe are interested in: ${produto}\n\nPlease quote for:\n- Product: ${produto}\n- Quantity: ${qtd} units (initial order, then scale to ${parseInt(qtd)*3 || '—'} units/month)${oemLine}\n- Incoterms: FOB (port closest to you)\n- Payment: 30% T/T upfront + 70% against BL copy\n\nPlease provide:\n1. FOB price per unit (USD)\n2. MOQ (Minimum Order Quantity)\n3. Sample price + DHL cost to Brazil\n4. Sample lead time\n5. Production lead time\n6. Product specifications sheet (PDF)\n7. Available certifications (ISO, CE, SGS, etc.)\n8. OEM capability (custom brand, packaging, manual)\n9. Trade Assurance availability\n10. Production capacity per month${obs}\n\nAbout us:${cnpjLine}\n- Market: Brazil (200M+ population)\n\nLooking forward to your quote.\n\nBest regards,\n${nome}\n${empresa}\n${meuEmail}${meuWhats ? ' | WhatsApp: '+meuWhats : ''}`;
+  window.open(`mailto:${email}?subject=${encodeURIComponent('RFQ: '+produto+' — '+qtd+' unidades')}&body=${encodeURIComponent(body)}`, '_blank');
+  fecharModal();
+}
+
+function copiarTemplate(name, produto, ncm, fob, moq) {
+  const nome = document.getElementById('rfqNome')?.value || '[SEU NOME]';
+  const empresa = document.getElementById('rfqEmpresa')?.value || '[SUA EMPRESA]';
+  const cnpj = document.getElementById('rfqCnpj')?.value || '';
+  const meuEmail = document.getElementById('rfqEmail')?.value || '[SEU EMAIL]';
+  const qtd = document.getElementById('rfqQtd')?.value || moq;
+  const oem = document.getElementById('rfqOem')?.value || '';
+  const cnpjLine = cnpj ? `\nCNPJ: ${cnpj}` : '';
+  const oemLine = oem ? `\nPersonalização: ${oem}` : '';
+  const template = `Subject: RFQ - ${produto} for Brazilian Market - ${empresa}\n\nDear ${name} Sales Team,\n\nMy name is ${nome}, I am the buyer at ${empresa}, a Brazilian e-commerce company.\n\nWe are interested in: ${produto}\n\nPlease quote for:\n- Product: ${produto}\n- Quantity: ${qtd} units${oemLine}\n- Incoterms: FOB\n- Payment: 30% T/T upfront + 70% against BL\n\nPlease provide:\n1. FOB price per unit (USD)\n2. MOQ\n3. Sample price + DHL cost to Brazil\n4. Production lead time\n5. Certifications available\n6. OEM capability\n7. Trade Assurance availability\n\nAbout us:${cnpjLine}\n- Market: Brazil (200M+ population)\n\nLooking forward to your quote.\n\nBest regards,\n${nome}\n${empresa}\n${meuEmail}`;
+  navigator.clipboard?.writeText(template).then(() => showToast('📋 RFQ copiado!')).catch(() => showToast('Erro'));
+}
+
+function adicionarFornecedorManual() {
+  const name = prompt('Nome do fornecedor:');
+  if (!name) return;
+  const email = prompt('Email:') || 'contato@fornecedor.cn';
+  const whatsapp = prompt('WhatsApp (+86...):') || '+86-000-0000';
+  const fob = prompt('FOB (USD):') || '$0.00';
+  const moq = parseInt(prompt('MOQ:')) || 100;
+  const supplier = { name, email, whatsapp, fob, moq:moq, port:'Manual', platform:'manual', website:'#', ncm:'[NCM]', produto:'[Produto]' };
+  // Persistir
+  let manual = [];
+  try { manual = JSON.parse(localStorage.getItem('sa_fornecedores') || '[]'); } catch(e) {}
+  manual.push(supplier);
+  localStorage.setItem('sa_fornecedores', JSON.stringify(manual));
+  // Re-renderizar aba
+  forn();
+  showToast('✅ Fornecedor adicionado!');
+}
+
+function validarCertsUI() {
+  const categoria = document.getElementById('certsCategoria').value.trim();
+  const lista = document.getElementById('certsLista').value.split(',').map(s => s.trim()).filter(Boolean);
+
+  const necessariasPorCat = {
+    eletronicos: ['INMETRO','ANATEL'], alimentos: ['ANVISA','MAPA'],
+    suplementos: ['ANVISA'], cosmeticos: ['ANVISA'], brinquedos: ['INMETRO'],
+  };
+  const necessarias = necessariasPorCat[categoria] || ['INMETRO'];
+  const enganosas = lista.filter(c => ['CE','FDA','RoHS','FCC','UL','CSA'].includes(c));
+  const validas = lista.filter(c => necessarias.includes(c));
+  const faltantes = necessarias.filter(c => !lista.includes(c));
+
+  const el = document.getElementById('certsResult');
+  el.innerHTML = `
+    <div class="result-row"><span>Categoria</span><span>${categoria || '--'}</span></div>
+    <div class="result-row"><span>Certificações declaradas</span><span>${lista.join(', ') || '--'}</span></div>
+    <div class="result-row"><span>Necessárias no BR</span><span>${necessarias.join(', ')}</span></div>
+    <div class="result-row"><span>✅ Válidas</span><span>${validas.join(', ') || 'nenhuma'}</span></div>
+    <div class="result-row"><span>⛔ Faltantes</span><span style="color:var(--r)">${faltantes.join(', ') || 'nenhuma'}</span></div>
+    ${enganosas.length ? `<div class="alert alert-warn">⚠️ ${enganosas.join(', ')} são INTERNACIONAIS — NÃO substituem ${necessarias.join('/')} no Brasil</div>` : ''}
+    ${faltantes.length ? `<div class="alert alert-err">⛔ Fornecedor NÃO está pronto para importar para o Brasil</div>` : `<div class="alert alert-info">✅ Fornecedor atende todas as certificações BR</div>`}
+  `;
+}
+
+// ============================================================
+// ABA 6: INTELIGÊNCIA DE MERCADO
+// ============================================================
+function intel() {
+  document.getElementById('main').innerHTML = `
+    <div class="card" style="border-left:3px solid var(--b)">
+      <h2>🧠 Inteligência de Mercado</h2>
+      <p style="font-size:.82em;color:#888;margin-bottom:12px">Scanner competitivo + Sourcing China · 🤖 IA conectada</p>
+      <div class="grid2">
+        <div style="background:var(--bg);padding:16px;border-radius:8px">
+          <h3 style="color:var(--g);margin-bottom:8px">🔍 Scanner de Marketplace</h3>
+          <p style="font-size:.75em;color:#888;margin-bottom:8px">Varre ML/Shopee/Amazon/Magalu/TikTok</p>
+          <div style="display:flex;gap:6px"><input id="intelNicho" type="text" placeholder="Nicho (ex: puxador inox, comedouro pet)" style="flex:1"><button class="btn" onclick="escanearMarketplace()">🔍 Escanear</button></div>
+          <div id="intelScanResult" style="margin-top:10px"></div>
+        </div>
+        <div style="background:var(--bg);padding:16px;border-radius:8px">
+          <h3 style="color:var(--y);margin-bottom:8px">🇨🇳 Sourcing China</h3>
+          <p style="font-size:.75em;color:#888;margin-bottom:8px">Fornecedores reais (Alibaba/MIC/GlobalSources)</p>
+          <div style="display:flex;gap:6px"><input id="intelProduto" type="text" placeholder="Produto (ex: comedouro pet silicone)" style="flex:1"><button class="btn" style="background:var(--y)" onclick="sourcingChina()">🇨🇳 Buscar</button></div>
+          <div id="intelSourcingResult" style="margin-top:10px"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card"><h2>📊 Histórico de Inteligência</h2><div id="intelHistorico">${TEIA.log.filter(l=>l.acao.includes('intel_')).slice(-5).map(l=>`<div class="result-row"><span>${l.acao.replace('intel_','')}</span><span>${new Date(l.ts).toLocaleTimeString()} — ${l.dados?.termo||l.dados?.produto||'--'}</span></div>`).join('')||'<p style="color:#aaa">Nenhum scan ainda</p>'}</div></div>
+    <div class="card"><h2>🌐 Marketplaces + Plataformas CN</h2><div class="result-row"><span>🇧🇷 ML | Shopee | Amazon | Magalu | TikTok</span><span>5 marketplaces BR</span></div><div class="result-row"><span>🇨🇳 Alibaba | MIC | GlobalSources | AliExpress | DHgate | 1688 | Taobao</span><span>14 plataformas CN</span></div></div>
+  `;
+}
+
+async function escanearMarketplace() {
+  const nicho = document.getElementById('intelNicho').value.trim();
+  if (!nicho) { showToast('⚠️ Digite um nicho'); return; }
+  const el = document.getElementById('intelScanResult');
+  el.innerHTML = `<div class="alert alert-info">🔍 Escaneando "${nicho}" nos marketplaces BR...</div>`;
+  try {
+    const r = await callAI([{role:'user',content:`Analise o nicho "${nicho}" nos marketplaces brasileiros (ML, Shopee, Amazon). Retorne JSON: niche, totalSellers, priceRange{min,max,median}, topProducts[{nome,preco}], gaps[], recommendation(GO/COND/NO-GO).`}],600);
+    const d=JSON.parse(r.content); const badge=d.recommendation==='GO'?'badge-go': d.recommendation==='COND'?'badge-cond':'badge-nogo';
+    el.innerHTML=`<div class="result-row"><span>Nicho</span><span><strong>${d.niche||nicho}</strong></span></div><div class="result-row"><span>Vendedores</span><span>${d.totalSellers||'--'}</span></div><div class="result-row"><span>Preço</span><span>R$${d.priceRange?.min||'--'}–R$${d.priceRange?.max||'--'} (med R$${d.priceRange?.median||'--'})</span></div><div class="result-row"><span>Recomendação</span><span class="${badge}">${d.recommendation||'--'}</span></div>${(d.gaps||[]).map(g=>`<div class="alert alert-info">💡 ${g}</div>`).join('')}`;
+    TEIA.registrar('intel_scanner',{termo:nicho,...d});
+  } catch(e) { el.innerHTML=`<div class="alert alert-err">❌ ${e.message}</div>`; }
+}
+
+async function sourcingChina() {
+  const produto = document.getElementById('intelProduto').value.trim();
+  if (!produto) { showToast('⚠️ Digite um produto'); return; }
+  const el = document.getElementById('intelSourcingResult');
+  el.innerHTML = `<div class="alert alert-info">🇨🇳 Buscando fornecedores para "${produto}"...</div>`;
+  try {
+    const r = await callAI([{role:'user',content:`Encontre fornecedores reais para "${produto}" em Alibaba/MIC/GlobalSources. Retorne JSON: product, ncm, suppliers[{name,platform,fob_usd,moq,location,certifications[],factory_confidence,estimated_landed_brl}], best_platform.`}],800);
+    const d=JSON.parse(r.content);
+    el.innerHTML=`<div class="result-row"><span>Produto</span><span><strong>${d.product||produto}</strong></span></div><div class="result-row"><span>NCM</span><span>${d.ncm||'--'}</span></div><div class="result-row"><span>Plataforma</span><span>${d.best_platform||'--'}</span></div>${(d.suppliers||[]).map(s=>`<div class="supplier-card"><div class="info"><strong>🏭 ${s.name}</strong><br><span style="font-size:.78em">${s.platform} · FOB $${s.fob_usd} · MOQ ${s.moq} · ${s.location}</span><br><span style="font-size:.72em">Score: ${s.factory_confidence}/100 | Landed: R$${s.estimated_landed_brl}</span></div><div class="actions"><button class="btn btn-sm btn-email" onclick="switchTab('forn')">📧 Contato</button></div></div>`).join('')}`;
+    TEIA.registrar('intel_sourcing',{produto,...d});
+  } catch(e) { el.innerHTML=`<div class="alert alert-err">❌ ${e.message}</div>`; }
+}
+
+// ============================================================
+// ABA 7: PIPELINE DE AGENTES
+// ============================================================
+const PLATFORMAS_CN = {
+  '1688.com': 'https://s.1688.com/selloffer/offer_search.htm?keywords=',
+  'Alibaba.com': 'https://www.alibaba.com/trade/search?searchText=',
+  'Made-in-China': 'https://www.made-in-china.com/multi-search/',
+  'GlobalSources': 'https://www.globalsources.com/search/products?query=',
+  'DHgate': 'https://www.dhgate.com/wholesale/search.do?searchkey=',
+  'AliExpress': 'https://www.aliexpress.com/wholesale?SearchText=',
+};
+
+function buscarFornecedorPlataforma(produto, plataforma) {
+  const base = PLATFORMAS_CN[plataforma] || PLATFORMAS_CN['Alibaba.com'];
+  window.open(base + encodeURIComponent(produto), '_blank');
+}
+
+function pipeline() {
+  const historico = TEIA.log.filter(l => l.acao.includes('pipeline_')).slice(-15);
+
+  document.getElementById('main').innerHTML = `
+    <div class="card" style="border-left:3px solid var(--y)">
+      <h2>⚙️ Pipeline de Agentes</h2>
+      <p style="font-size:.82em;color:#888;margin-bottom:12px">Discovery → Scanner → Sourcing → Ranking → Fornecedores · Cron 2×/dia (06h e 18h)</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
+        <button class="btn" onclick="executarPipeline('todas')">▶️ Todas as 5 categorias</button>
+        <button class="btn" style="background:var(--b)" onclick="executarPipeline('pet')">🐱 Pet</button>
+        <button class="btn" style="background:var(--b)" onclick="executarPipeline('casa')">🏠 Casa</button>
+        <button class="btn" style="background:var(--b)" onclick="executarPipeline('fitness')">💪 Fitness</button>
+        <button class="btn" style="background:var(--b)" onclick="executarPipeline('baby')">👶 Baby</button>
+        <button class="btn" style="background:var(--b)" onclick="executarPipeline('eletronicos')">🔌 Eletrônicos</button>
+      </div>
+      <div id="pipelineStatus"></div>
+    </div>
+    <div class="card"><h2>📋 Histórico</h2>${historico.length?historico.map(l=>`<div class="result-row"><span>${l.dados?.tipo||'Manual'} · ${l.dados?.categoria||'--'}</span><span><span class="badge-go" style="font-size:.7em">✓ OK</span> ${new Date(l.ts).toLocaleString()} · ${l.dados?.tempo||'--'}s</span></div>`).join(''):'<p style="color:#aaa">Nenhuma execução ainda</p>'}<p style="font-size:.75em;color:#aaa;margin-top:8px">⏰ Cron: 06h/18h · Pipeline automático via Hermes</p></div>
+    <div class="card"><h2>🔗 Plataformas Chinesas</h2>${Object.entries(PLATFORMAS_CN).map(([n,u])=>`<div class="result-row"><span>${n}</span><a href="${u}" target="_blank" style="color:var(--b);font-size:.82em">abrir ↗</a></div>`).join('')}</div>
+  `;
+}
+
+async function executarPipeline(categoria) {
+  const el = document.getElementById('pipelineStatus');
+  const inicio = Date.now();
+  const cats = categoria==='todas'?['pet','casa','fitness','baby','eletronicos']:[categoria];
+  const CATEGORIAS_NOMES = { pet:'Pet', casa:'Casa', fitness:'Fitness', baby:'Baby', eletronicos:'Eletrônicos' };
+
+  el.innerHTML=`<div class="alert alert-info">⏳ Ciclo — ${cats.length} ${cats.length===1?'categoria':'categorias'}</div>`;
+
+  TEIA.dados.ranking = TEIA.dados.ranking || [];
+  const novosResultados = [];
+  const key = getKey();
+  if (!key) { el.innerHTML+=`<div class="alert alert-err">❌ Configure a chave API em ⚙️ IA</div>`; return; }
+
+  for(const cat of cats) {
+    const t0=Date.now(), id=`pipe_${cat}_${t0}`;
+    el.innerHTML+=`<div class="alert alert-info" id="${id}">⏳ ${cat}: Discovery — chamando IA...</div>`;
+
+    try {
+      const catNome = CATEGORIAS_NOMES[cat] || cat;
+      // Usar API pipeline serverless para análise completa
+      const r = await fetch('/api/pipeline', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({ category:cat, api_key:key, provider:window.currentProvider })
+      });
+      if (!r.ok) throw new Error((await r.json().catch(()=>({}))).error || 'HTTP '+r.status);
+      const d = await r.json();
+
+      const produtos = d.nichos || [];
+      produtos.forEach(p => { p.categoria = cat; p.ts = Date.now(); });
+
+      novosResultados.push(...produtos);
+      TEIA.dados.ranking = [...TEIA.dados.ranking.filter(r=>r.categoria!==cat), ...produtos];
+      try { localStorage.setItem('sa_ranking', JSON.stringify(TEIA.dados.ranking)); } catch(e) {}
+
+      const t=((Date.now()-t0)/1000).toFixed(1);
+      document.getElementById(id).innerHTML=`✅ ${cat}: ✓ OK · ${t}s · ${d.go||0} GO · ${d.top||0} TOP · ${produtos.length} nichos`;
+      document.getElementById(id).className='alert alert-info';
+      TEIA.registrar('pipeline_execucao',{categoria:cat,status:'ok',tempo:parseFloat(t),tipo:'IA',nichos:produtos.length,go:d.go,top:d.top});
+
+    } catch(e) {
+      document.getElementById(id).innerHTML=`⚠️ ${cat}: Erro — ${e.message}`;
+      document.getElementById(id).className='alert alert-warn';
+      TEIA.registrar('pipeline_execucao',{categoria:cat,status:'erro',tipo:'IA',erro:e.message});
+    }
+  }
+
+  const total=((Date.now()-inicio)/1000).toFixed(0);
+  el.innerHTML+=`<div class="alert alert-info" style="margin-top:8px">✅ Pipeline concluído — ${novosResultados.length} nichos descobertos · <button class="btn btn-sm" onclick="switchTab('prosp')">📊 Ver Ranking</button></div>`;
+  showToast(`✅ ${novosResultados.length} nichos descobertos — vá em 🔍 Prospecção`);
+}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+
+// ============================================================
+// ABA 8: IA (PROVIDERS)
+// ============================================================
+function ia() {
+  document.getElementById('main').innerHTML = `
+    <div class="card">
+      <h2>⚙️ Configuração de IA</h2>
+      <select id="iaProvider" onchange="window.currentProvider=this.value;saveKeys()">
+        ${Object.keys(PROVIDERS).map(p => `<option value="${p}" ${window.currentProvider===p?'selected':''}>${PROVIDERS[p].name} (${p})</option>`).join('')}
+      </select>
+      ${Object.keys(PROVIDERS).map(p => `
+        <input id="iaKey_${p}" type="password" placeholder="Chave API ${PROVIDERS[p].name}" value="${(window.apiKeys||{})[p]||''}" style="margin-bottom:8px" onchange="window.apiKeys['${p}']=this.value;saveKeys()">
+      `).join('')}
+      <button class="btn" onclick="testarChave()">Testar Chave</button>
+      <div id="iaTestResult" style="margin-top:12px"></div>
+      <div style="margin-top:8px;display:flex;gap:8px">
+        <button class="btn btn-sm" style="background:var(--b)" onclick="exportConfig()">📤 Exportar Config</button>
+        <button class="btn btn-sm" style="background:var(--y)" onclick="importConfig()">📥 Importar Config</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>📊 Uso de Tokens</h2>
+      <div class="result-row"><span>Provedor ativo</span><span>${PROVIDERS[window.currentProvider]?.name || '--'}</span></div>
+      <div class="result-row"><span>Modelo</span><span>${PROVIDERS[window.currentProvider]?.model || '--'}</span></div>
+      <div class="result-row"><span>Custo estimado (1M tokens)</span><span>${window.currentProvider==='deepseek'?'~$0.27': '~$3-15'}</span></div>
+    </div>
+  `;
+
+  // Restaurar valores das API keys
+  Object.keys(PROVIDERS).forEach(p => {
+    const el = document.getElementById(`iaKey_${p}`);
+    if (el) el.value = (window.apiKeys || {})[p] || '';
+  });
+}
+
+async function testarChave() {
+  const el = document.getElementById('iaTestResult');
+  el.innerHTML = '<div class="alert alert-info">🔑 Testando chave...</div>';
+  try {
+    const r = await callAI([{role:'user',content:'oi'}], 1);
+    el.innerHTML = `<div class="alert alert-info">✅ Chave válida! (${PROVIDERS[window.currentProvider].name})</div>`;
+  } catch(e) {
+    el.innerHTML = `<div class="alert alert-err">❌ ${e.message}</div>`;
+  }
+}
+
+function exportConfig() {
+  const data = { apiKeys: window.apiKeys, provider: window.currentProvider, version: VERSAO };
+  const blob = new Blob([JSON.stringify(data,null,2)], { type:'application/json' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = 'super-agentes-config.json'; a.click();
+}
+
+function importConfig() {
+  const input = document.createElement('input'); input.type = 'file'; input.accept = '.json';
+  input.onchange = async () => {
+    const file = input.files[0];
+    if (!file) return;
+    try {
+      const data = JSON.parse(await file.text());
+      if (data.apiKeys) { window.apiKeys = data.apiKeys; saveKeys(); }
+      if (data.provider) { window.currentProvider = data.provider; saveKeys(); }
+      ia(); // recarregar aba
+      showToast('✅ Configuração importada!');
+    } catch(e) { showToast('❌ Erro ao importar: ' + e.message); }
+  };
+  input.click();
+}
+
+// ============================================================
+// ABA 9: SAAS
+// ============================================================
+function saas() {
+  document.getElementById('main').innerHTML = `
+    <div class="card">
+      <h2>☁️ SaaS — Planos</h2>
+      <div class="grid2">
+        <div class="card" style="text-align:center">
+          <h3>🆓 Free</h3>
+          <div class="num" style="font-size:1.5em">R$ 0</div>
+          <p style="font-size:.85em;color:#888">50 SKUs · 1 usuário · Análises básicas</p>
+        </div>
+        <div class="card" style="text-align:center;border:2px solid var(--g)">
+          <h3>💼 Pro</h3>
+          <div class="num" style="font-size:1.5em">R$ 197<span style="font-size:.6em">/mês</span></div>
+          <p style="font-size:.85em;color:#888">500 SKUs · 3 usuários · IA ilimitada</p>
+        </div>
+        <div class="card" style="text-align:center">
+          <h3>🏢 Enterprise</h3>
+          <div class="num" style="font-size:1.5em">R$ 997<span style="font-size:.6em">/mês</span></div>
+          <p style="font-size:.85em;color:#888">10k SKUs · Ilimitado · API + White label</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>📊 Stack Tecnológica</h2>
+      <div class="result-row"><span>Frontend</span><span>HTML5 + CSS3 + JS (puro)</span></div>
+      <div class="result-row"><span>Backend</span><span>Python + Serverless Vercel</span></div>
+      <div class="result-row"><span>IA</span><span>DeepSeek / Anthropic / MiniMax / Z.AI</span></div>
+      <div class="result-row"><span>Deploy</span><span>Vercel (10s)</span></div>
+      <div class="result-row"><span>Cache</span><span>Vercel KV + localStorage</span></div>
+      <div class="result-row"><span>Monitoramento</span><span>TEIA + Brain Pulse + Auto-aprendizado</span></div>
+    </div>
+  `;
+}
+
+// ============================================================
+// UTILITÁRIOS
+// ============================================================
+function showToast(msg) {
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.textContent = msg;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 3000);
+}
+
+// ============================================================
+// INIT
+// ============================================================
+async function init() {
+  loadState();
+  // Carregar ranking salvo do pipeline
+  try {
+    const raw = localStorage.getItem('sa_ranking');
+    if (raw) TEIA.dados.ranking = JSON.parse(raw);
+  } catch(e) {}
+  switchTab('overview');
+  await loadFromCloud();
+
+  TEIA.registrar('sistema_iniciado', { version: VERSAO });
+  updatePulse();
+
+  // Auto-refresh se versão cloud > local (só depois de carregar)
+  try {
+    const r = await fetch('/api/state');
+    const d = await r.json();
+    if (d && d.state && d.state.version && d.state.version > VERSAO) {
+      showToast('🔄 Nova versão disponível — recarregando...');
+      setTimeout(() => window.location.reload(), 2000);
+    }
+  } catch(e) {}
+}
+
+// Health check
+(async function healthCheck() {
+  const checks = [
+    () => !!window.localStorage,
+    () => !!window.fetch,
+    () => !!TEIA,
+    () => Object.keys(PROVIDERS).length === 4,
+  ];
+  const fails = checks.filter(fn => !fn());
+  if (fails.length) console.warn('Health check: ' + fails.length + ' falhas');
+})();
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

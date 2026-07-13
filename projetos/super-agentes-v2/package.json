@@ -1,0 +1,12 @@
+{
+  "name": "super-agentes-v2",
+  "version": "13.0.0",
+  "private": true,
+  "description": "Super Agentes v13 — Dashboard de análise de viabilidade com auto-aprendizado",
+  "scripts": {
+    "deploy": "npx vercel --prod --yes"
+  },
+  "dependencies": {
+    "@vercel/kv": "^1.0.0"
+  }
+}
