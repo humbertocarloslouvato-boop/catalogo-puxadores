@@ -67,15 +67,15 @@ Para cada nicho informe:
 - fob: preço FOB USD (preço de FÁBRICA no 1688 com MOQ 300+, tipicamente 30-50% do varejo)
 - landed: custo landed estimado BRL
 - preco: preço venda sugerido BRL
-- concorrencia: descrição resumida
+- concorrencia: descrição resumida da concorrência no Brasil
 - score: 0-100
 - recomendacao: GO/COND/NO-GO
 - regulacao: certificação necessária
 - volume_m3: volume unitário estimado
 - decisao_modal: recomendação de frete (COURIER/LCL/FCL)
-- topSellers: array de 3-5 vendedores REAIS com {nome, marketplace (ML/Shopee/Amazon), vendasMes (número estimado de vendas/mês), precoPraticado (R$), avaliacoes (número), estrelas (1-5)}
-- totalSellers: número total de vendedores estimado no nicho
-- marketplaces: array de marketplaces onde o produto é vendido (ex: ["ML","Shopee"])
+- topSellers: array com EXATAMENTE 3-5 vendedores que REALMENTE vendem este produto hoje no Mercado Livre e Shopee Brasil. Use seu conhecimento de mercado — NÃO invente nomes genéricos. Informe: nome (nome real da loja), marketplace ("ML" ou "Shopee"), vendasMes (número estimado de unidades vendidas por mês), precoPraticado (preço em reais), avaliacoes (número de avaliações), estrelas (nota de 1 a 5)
+- totalSellers: número total de vendedores deste produto nos marketplaces brasileiros
+- marketplaces: array dos marketplaces onde este produto é encontrado (ex: ["ML","Shopee","Amazon"])
 
 Retorne APENAS JSON: {"nichos":[{...}]}`;
 
@@ -147,7 +147,14 @@ Retorne APENAS JSON: {"nichos":[{...}]}`;
         categoria: category,
         ts: Date.now(),
         // Marketplace intelligence
-        topSellers: n.topSellers || [],
+        topSellers: (n.topSellers || []).map(s => ({
+          nome: s.nome || s.name || s.loja || '—',
+          marketplace: s.marketplace || s.plataforma || 'ML',
+          vendasMes: s.vendasMes || s.vendas || s.vendas_mes || 0,
+          precoPraticado: s.precoPraticado || s.preco || s.price || 0,
+          avaliacoes: s.avaliacoes || s.reviews || s.avaliacoes_count || 0,
+          estrelas: s.estrelas || s.stars || s.rating || 0
+        })),
         totalSellers: n.totalSellers || 0,
         marketplaces: n.marketplaces || ['ML','Shopee'],
         // Truth Engine fields (ProspecçãoPro-inspired)
