@@ -1,15 +1,24 @@
 {
   "name": "super-agentes-v2",
-  "type": "module",
-  "version": "13.0.0",
+  "version": "14.0.0",
   "private": true,
-  "description": "Super Agentes v13 — Dashboard de análise de viabilidade com auto-aprendizado",
+  "type": "module",
+  "description": "Super Agentes v14 — Análise de viabilidade China→Brasil com MELI real, contatos de fornecedor e cotação direta. Arquitetura modular, sem monólito.",
   "scripts": {
-    "test": "node --test tests/unit.test.js tests/integration.test.js",
+    "test": "node --test test/",
+    "test:watch": "node --test --watch test/",
+    "lint": "eslint api/ public/js/ lib/ test/",
+    "lint:fix": "eslint --fix api/ public/js/ lib/ test/",
+    "dev": "node scripts/dev-server.js",
     "deploy": "npx vercel --prod --yes"
   },
   "dependencies": {
-    "@vercel/kv": "^1.0.0",
-    "cheerio": "^1.2.0"
+    "@vercel/kv": "^1.0.1"
+  },
+  "devDependencies": {
+    "eslint": "^9.0.0"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }
