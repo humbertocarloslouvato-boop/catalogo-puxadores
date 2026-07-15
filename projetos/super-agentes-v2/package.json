@@ -5,8 +5,8 @@
   "type": "module",
   "description": "Super Agentes v14 — Análise de viabilidade China→Brasil com MELI real, contatos de fornecedor e cotação direta. Arquitetura modular, sem monólito.",
   "scripts": {
-    "test": "node --test test/",
-    "test:watch": "node --test --watch test/",
+    "test": "node --test \"test/*.test.js\"",
+    "test:watch": "node --test --watch \"test/*.test.js\"",
     "lint": "eslint api/ public/js/ lib/ test/",
     "lint:fix": "eslint --fix api/ public/js/ lib/ test/",
     "dev": "node scripts/dev-server.js",
@@ -16,7 +16,8 @@
     "@vercel/kv": "^1.0.1"
   },
   "devDependencies": {
-    "eslint": "^9.0.0"
+    "eslint": "^9.0.0",
+    "vercel": "^56.2.0"
   },
   "engines": {
     "node": ">=20"
